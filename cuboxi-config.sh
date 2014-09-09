@@ -13,6 +13,6 @@
 if [ $(id -u) -ne 0 ]; then
   printf "\nNOTICE: the software on this Cubox-i has not been fully configured. Please run 'sudo cuboxi-config'\n\n"
 else
-  raspi-config
+  cuboxi-config
   exec login -f root
 fi
