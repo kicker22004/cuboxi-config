@@ -29,7 +29,7 @@ do_standalone() {
     --yes-button Yes --no-button No
   RET=$?
   if [ $RET -eq 0 ]; then
-  cp $SRC/cuboxi-config /usr/bin/
+  cp $SRC/cuboxi-config_standalone /usr/bin/cuboxi-config
   cp $SRC/motd /etc/init.d/
   cp $SRC/bootsplash /etc/init.d/
   chmod +x /usr/bin/cuboxi-config
@@ -45,6 +45,8 @@ PCT=`expr $PCT + 1`;
 echo $PCT;
 sleep .020;
 done; ) | whiptail --title "Installing.." --gauge "Copying files and permissions, Please Wait..$
+  cd ..
+  rm -rf cuboxi-config
  whiptail --msgbox "Please Reboot To Complete The Install." 20 60 1
  else
   return
