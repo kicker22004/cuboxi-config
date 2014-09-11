@@ -29,6 +29,7 @@ do_standalone() {
     --yes-button Yes --no-button No
   RET=$?
   if [ $RET -eq 0 ]; then
+  (echo 123; echo 123; echo) | adduser cubox
   cp $SRC/cuboxi-config_standalone /usr/bin/cuboxi-config
   cp $SRC/motd /etc/init.d/
   cp $SRC/bootsplash /etc/init.d/
