@@ -45,7 +45,7 @@ do
 PCT=`expr $PCT + 1`;
 echo $PCT;
 sleep .020;
-done; ) | whiptail --title "Installing.." --gauge "Copying files and permissions, Please Wait.."
+done; ) | whiptail --title "Installing.." --gauge "Copying files and permissions, Please Wait.." 20 60 1
   cd ..
   rm -rf cuboxi-config
  whiptail --msgbox "Please Reboot To Complete The Install." 20 60 1
