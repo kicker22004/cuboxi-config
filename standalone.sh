@@ -45,7 +45,7 @@ do
 PCT=`expr $PCT + 1`;
 echo $PCT;
 sleep .020;
-done; ) | whiptail --title "Installing.." --gauge "Copying files and permissions, Please Wait..$
+done; ) | whiptail --title "Installing.." --gauge "Copying files and permissions, Please Wait.."
   cd ..
   rm -rf cuboxi-config
  whiptail --msgbox "Please Reboot To Complete The Install." 20 60 1
@@ -71,7 +71,7 @@ do_finish() {
 #
 calc_wt_size
 while true; do
-  FUN=$(whiptail --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Setup Op$
+  FUN=$(whiptail --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
     "1 Standalone installer" "This will install cuboxi-config on your debian image" \
     3>&1 1>&2 2>&3)
   RET=$?
