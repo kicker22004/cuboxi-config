@@ -41,7 +41,7 @@ do_standalone() {
   update-rc.d motd defaults
   update-rc.d bootsplash default
   apt-get update
-  apt-get install -y build essential
+  apt-get install -y build-essential
 PCT=0
 (
 while test $PCT != 100;
