@@ -102,6 +102,21 @@ do_ssh() {
   fi
 }
 
+do_ssh() {
+  whiptail --fb --yesno "Would you like the Minecraft MineOs WebUi?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    Minecraft_UI
+    whiptail --fb --msgbox "Installing Please Wait" 20 60 1
+  elif [ $RET -eq 1 ]; then
+    update-rc.d ssh disable &&
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+}
+
 do_SD2USB() {
   whiptail --msgbox "\
 WARNING!! THIS WILL ERASE ANYTHING THAT IS ON SDA1!
@@ -366,6 +381,28 @@ FUN=$(whiptail --title "Cubox-i Software Configuration Tool (cuboxi-config)" --m
   fi
 }
 
+do_One_Click_menu() {
+FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "One Click Installer Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+    "C1 Minecraft WebUi" "This will install the great MineOs WebUi for Minecraft!" \
+    "C2 Owncloud" "This will Setup Owncloud fast and simple." \
+    "C3 LXDE" "Sometimes we all need a GUI, Make it LXDE?" \
+    "C4 Gnome 3" "Gnome your thing? Click here!" \
+    "C5 Toggle Volume" "You Guessed it, What output would you like?" \
+    3>&1 1>&2 2>&3)
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    return 0
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      C1\ *) do_WebUi ;;
+      C2\ *) do_Owncloud ;;
+      C3\ *) do_LXDE ;;
+      C4\ *) do_Gnome_3 ;;
+      C5\ *) do_Toggle ;;
+      *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+}
 
 #
 # Interactive use loop
