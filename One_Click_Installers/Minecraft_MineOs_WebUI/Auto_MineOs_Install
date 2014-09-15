@@ -8,8 +8,6 @@ log='logger.txt'
 
 clear
 
-SRC=/tmp/
-
 echo -e "${green} Welcome to the Auto script!"
 sleep 2
 echo "We will need just one peice of information from you then we can continue."
@@ -110,8 +108,4 @@ sleep 2
 echo -e "${green} 100%"
 echo "Enjoy Your New Cubox-i4pro Server with an amazing WebUI!." 
 sleep 5
-{
- cd $SRC
-rm -rf temp
-} &> "${log}"
 exit 0
