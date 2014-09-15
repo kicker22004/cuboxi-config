@@ -89,4 +89,5 @@ while true; do
   else
     exit 1
   fi
+  cd $HOME
 done
