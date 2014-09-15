@@ -17,7 +17,7 @@ sleep 3
 
 #Ask about noip2.
 echo -e "${yellow}"
-cd /usr/local/src/
+cd /usr/local/src
 while true; do
     read -p "Would you like to Install noip2? (yes or no)" yn
     case $yn in
@@ -109,4 +109,5 @@ echo -e "${green} 100%"
 echo "Enjoy Your New Cubox-i4pro Server with an amazing WebUI!."
 tput sgr0
 sleep 5
+cuboxi-config
 exit 0
