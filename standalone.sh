@@ -25,7 +25,7 @@ calc_wt_size() {
 SRC=standalone
 
 do_standalone() {
- whiptail --yesno "Standalone Installer" 20 60 2 \
+ whiptail --fb --yesno "Standalone Installer" 20 60 2 \
     --yes-button Yes --no-button No
   RET=$?
   if [ $RET -eq 0 ]; then
@@ -49,10 +49,10 @@ do
 PCT=`expr $PCT + 1`;
 echo $PCT;
 sleep .020;
-done; ) | whiptail --title "Installing.." --gauge "Copying files and permissions, Please Wait.." 20 60 1
+done; ) | whiptail --fb --title "Installing.." --gauge "Copying files and permissions, Please Wait.." 20 60 1
   cd ..
   rm -rf cuboxi-config
- whiptail --msgbox "Please Reboot To Complete The Install." 20 60 1
+ whiptail --fb --msgbox "Please Reboot To Complete The Install." 20 60 1
  else
   return
   fi
@@ -61,7 +61,7 @@ done; ) | whiptail --title "Installing.." --gauge "Copying files and permissions
 
 do_finish() {
   if [ $ASK_TO_REBOOT -eq 1 ]; then
-    whiptail --yesno "Would you like to reboot now?" 20 60 2
+    whiptail --fb --yesno "Would you like to reboot now?" 20 60 2
     if [ $? -eq 0 ]; then # yes
       sync
       reboot
@@ -75,7 +75,7 @@ do_finish() {
 #
 calc_wt_size
 while true; do
-  FUN=$(whiptail --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
+  FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
     "1 Standalone installer" "This will install cuboxi-config on your debian image" \
     3>&1 1>&2 2>&3)
   RET=$?
@@ -84,8 +84,8 @@ while true; do
   elif [ $RET -eq 0 ]; then
     case "$FUN" in
       1\ *) do_standalone ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+      *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   else
     exit 1
   fi
