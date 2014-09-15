@@ -31,7 +31,7 @@ you have heavily customised your installation.\
 " 20 70 1
 }
 
-do_expand_rootfs(){
+do_expand_rootfs(){
  whiptail --msgbox "Resize praparing" 20 60 1
  update-rc.d cubian-firstrun defaults
  whiptail --msgbox "Resize will finish on reboot" 20 60 1
@@ -102,7 +102,7 @@ do_ssh() {
   fi
 }
 
-do_ssh() {
+do_webui() {
   whiptail --fb --yesno "Would you like the Minecraft MineOs WebUi?" 20 60 2 \
     --yes-button Yes --no-button No
   RET=$?
@@ -381,7 +381,7 @@ FUN=$(whiptail --title "Cubox-i Software Configuration Tool (cuboxi-config)" --m
   fi
 }
 
-do_One_Click_menu() {
+do_one_click_menu() {
 FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "One Click Installer Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "C1 Minecraft WebUi" "This will install the great MineOs WebUi for Minecraft!" \
     "C2 Owncloud" "This will Setup Owncloud fast and simple." \
@@ -394,7 +394,7 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
     return 0
   elif [ $RET -eq 0 ]; then
     case "$FUN" in
-      C1\ *) do_WebUi ;;
+      C1\ *) do_webui ;;
       C2\ *) do_Owncloud ;;
       C3\ *) do_LXDE ;;
       C4\ *) do_Gnome_3 ;;
@@ -416,7 +416,7 @@ while true; do
     "4 Internationalisation Options" "Set up language and regional settings to match your location" \
     "5 Boot Options" "SD/USB Boot" \
     "6 Advanced Options" "Configure advanced settings" \
-    "7 One Click Installers" "(Placeholder)" \
+    "7 One Click Installers" "WIP" \
     "8 About Cuboxi-config" "Information about this configuration tool" \
     3>&1 1>&2 2>&3)
   RET=$?
