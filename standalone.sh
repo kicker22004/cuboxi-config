@@ -33,11 +33,15 @@ do_standalone() {
   cp $SRC/cuboxi-config_standalone /usr/bin/cuboxi-config
   cp $SRC/motd /etc/init.d/
   cp $SRC/bootsplash /etc/init.d/
+  cp One_Click_Installers/Minecraft_MineOs_WebUI/Auto_MineOs_Install /usr/bin/Minecraft_UI
   chmod +x /usr/bin/cuboxi-config
   chmod +x /etc/init.d/bootsplash
   chmod +x /etc/init.d/motd
+  chmod +x /usr/bin/Minecraft_UI  
   update-rc.d motd defaults
-  update-rc.d bootsplash defaults
+  update-rc.d bootsplash default
+  apt-get update
+  apt-get build install -y build essential
 PCT=0
 (
 while test $PCT != 100;
