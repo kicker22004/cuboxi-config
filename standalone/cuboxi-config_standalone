@@ -379,7 +379,7 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
   fi
 }
 
-do_One_Click_menu() {
+do_one_click_menu() {
 FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "One Click Installer Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "C1 Minecraft WebUi" "This will install the great MineOs WebUi for Minecraft!" \
     "C2 Owncloud" "This will Setup Owncloud fast and simple." \
