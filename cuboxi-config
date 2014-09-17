@@ -117,6 +117,45 @@ do_webui() {
   fi
 }
 
+do_toggle() {
+  whiptail --fb --yesno "Toggle Outputs" 20 60 2 \
+    --yes-button HDMI --no-button SPDIF
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    cat <<EOF >/etc/asound.conf
+pcm.!default {
+  type plug
+  slave {
+    pcm "hw:1,0"
+  }
+}
+
+ctl.!default {
+  type hw
+  card 1
+}
+EOF
+    whiptail --fb --msgbox "HDMI Selected" 20 60 1
+elif [ $RET -eq 1 ]; then
+         cat <<EOF >/etc/asound.conf
+pcm.!default {
+  type plug
+  slave {
+    pcm "hw:0,0"
+  }
+}
+
+ctl.!default {
+  type hw
+  card 0
+}
+EOF
+    whiptail --fb --msgbox "SPDIF Selected" 20 60 1
+  else
+    return $RET
+  fi
+}
+
 do_SD2USB() {
   whiptail --msgbox "\
 WARNING!! THIS WILL ERASE ANYTHING THAT IS ON SDA1!
@@ -398,7 +437,7 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
       C2\ *) do_Owncloud ;;
       C3\ *) do_LXDE ;;
       C4\ *) do_Gnome_3 ;;
-      C5\ *) do_Toggle ;;
+      C5\ *) do_toggle ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
