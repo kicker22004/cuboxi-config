@@ -450,7 +450,7 @@ while true; do
     "1 Expand Filesystem" "Ensures that all of the SD card storage is available to the OS" \
     "2 Change Root Password" "Change password for the Root user (root)" \
     "3 Change User Password" "Change password for the default user (cubox)" \
-    "4 Toggle Volume" \
+    "4 Toggle Volume" "Pick Your Output" \
     "5 Internationalisation Options" "Set up language and regional settings to match your location" \
     "6 Boot Options" "SD/USB Boot" \
     "7 Advanced Options" "Configure advanced settings" \
