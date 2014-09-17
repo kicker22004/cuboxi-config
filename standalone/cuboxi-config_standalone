@@ -423,7 +423,6 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
     "C2 Owncloud" "This will Setup Owncloud fast and simple." \
     "C3 LXDE" "Sometimes we all need a GUI, Make it LXDE?" \
     "C4 Gnome 3" "Gnome your thing? Click here!" \
-    "C5 Toggle Volume" "You Guessed it, What output would you like?" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -434,7 +433,6 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
       C2\ *) do_Owncloud ;;
       C3\ *) do_LXDE ;;
       C4\ *) do_Gnome_3 ;;
-      C5\ *) do_toggle ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
@@ -445,15 +443,16 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
 #
 calc_wt_size
 while true; do
-  FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
-    "1 Expand Filesystem" "Only on builds, not for standalone!" \
+  FUN=$(whiptail --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
+    "1 Expand Filesystem" "Ensures that all of the SD card storage is available to the OS" \
     "2 Change Root Password" "Change password for the Root user (root)" \
     "3 Change User Password" "Change password for the default user (cubox)" \
-    "4 Internationalisation Options" "Set up language and regional settings to match your location" \
-    "5 Boot Options" "SD/USB Boot" \
-    "6 Advanced Options" "Configure advanced settings" \
-    "7 One Click Installers" "(Placeholder)" \
-    "8 About Cuboxi-config" "Information about this configuration tool" \
+    "4 Toggle Volume" \
+    "5 Internationalisation Options" "Set up language and regional settings to match your location" \
+    "6 Boot Options" "SD/USB Boot" \
+    "7 Advanced Options" "Configure advanced settings" \
+    "8 One Click Installers" "WIP" \
+    "9 About Cuboxi-config" "Information about this configuration tool" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -463,13 +462,14 @@ while true; do
       1\ *) do_expand_rootfs ;;
       2\ *) do_change_Root ;;
       3\ *) do_change_pass ;;
-      4\ *) do_internationalisation_menu ;;
-      5\ *) do_boot_menu ;;
-      6\ *) do_advanced_menu ;;
-      7\ *) do_one_click_menu ;;
-      8\ *) do_about ;;
-      *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
+      4\ *) do_toggle ;;
+      5\ *) do_internationalisation_menu ;;
+      6\ *) do_boot_menu ;;
+      7\ *) do_advanced_menu ;;
+      8\ *) do_one_click_menu ;;
+      9\ *) do_about ;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   else
     exit 1
   fi
