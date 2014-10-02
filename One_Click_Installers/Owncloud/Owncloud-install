@@ -21,8 +21,6 @@ usermod -a -G www-data www-data
 #Make Work folders.
 echo -e "${yellow}Making Folders"
 {
-sudo mkdir -p /var/www/owncloud
-echo "1G" > /var/www/owncloud/size
 mkdir -p /srv/http/owncloud/data
 chown www-data:www-data /srv/http/owncloud/data
 } &> "${log}"
@@ -54,6 +52,7 @@ echo -e "${yellow}Installing Owncloud"
 wget https://download.owncloud.org/community/owncloud-7.0.2.tar.bz2
 tar xvf owncloud*
 mv owncloud/ /var/www/
+echo "1G" > /var/www/owncloud/size
 chown -R www-data:www-data /var/www
 clear
 echo -e "${green}As Always thanks for checking out my guides, Please leave a comment if it helped you."
