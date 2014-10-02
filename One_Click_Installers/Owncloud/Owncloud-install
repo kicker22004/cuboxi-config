@@ -56,6 +56,8 @@ tar xvf owncloud*
 mv owncloud/ /var/www/
 echo "1G" > /var/www/owncloud/size
 chown -R www-data:www-data /var/www
+service nginx restart
+service php5-fpm restart
 clear
 echo -e "${green}As Always thanks for checking out my guides, Please leave a comment if it helped you."
 tput sgr0
