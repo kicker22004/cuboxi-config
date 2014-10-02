@@ -23,7 +23,7 @@ calc_wt_size() {
 }
 
 do_about() {
-  whiptail --msgbox "\
+  whiptail --fb --msgbox "\
 This tool provides a straight-forward way of doing initial
 configuration of the Cubox-i (modified version of the Raspberry Pi rasp-config). Although it can be run
 at any time, some of the options may have difficulties if
@@ -31,23 +31,24 @@ you have heavily customised your installation.\
 " 20 70 1
 }
 
-do_expand_rootfs() {
- whiptail --msgbox "Resize praparing" 20 60 1
+do_expand_rootfs(){
+ whiptail --fb --msgbox "Resize praparing" 20 60 1
  update-rc.d cubian-firstrun defaults
- whiptail --msgbox "Resize will finish on reboot" 20 60 1
+ whiptail --fb --msgbox "Resize will finish on reboot" 20 60 1
  ASK_TO_REBOOT=1
 }
 
+
 do_change_pass() {
-  whiptail --msgbox "You will now be asked to enter a new password for the cubox user" 20 60 1
+  whiptail --fb --msgbox "You will now be asked to enter a new password for the cubox user" 20 60 1
   passwd cubox &&
-  whiptail --msgbox "Password changed successfully" 20 60 1
+  whiptail --fb --msgbox "Password changed successfully" 20 60 1
 }
 
 do_change_Root() {
-   whiptail --msgbox "You will now be asked to enter a new password for the root user" 20 60 1
+   whiptail --fb --msgbox "You will now be asked to enter a new password for the root user" 20 60 1
   passwd root &&
-  whiptail --msgbox "Password changed successfully" 20 60 1
+  whiptail --fb --msgbox "Password changed successfully" 20 60 1
 }
 
 do_configure_keyboard() {
@@ -65,7 +66,7 @@ do_change_timezone() {
 }
 
 do_change_hostname() {
-  whiptail --msgbox "\
+  whiptail --fb --msgbox "\
 Please note: RFCs mandate that a hostname's labels \
 may contain only the ASCII letters 'a' through 'z' (case-insensitive), 
 the digits '0' through '9', and the hyphen.
@@ -84,25 +85,26 @@ No other symbols, punctuation characters, or blank spaces are permitted.\
 
 do_ssh() {
   if [ -e /var/log/regen_ssh_keys.log ] && ! grep -q "^finished" /var/log/regen_ssh_keys.log; then
-    whiptail --msgbox "Initial ssh key generation still running. Please wait and try again." 20 60 2
+    whiptail --fb --msgbox "Initial ssh key generation still running. Please wait and try again." 20 60 2
     return 1
   fi
-  whiptail --yesno "Would you like the SSH server enabled or disabled?" 20 60 2 \
+  whiptail --fb --yesno "Would you like the SSH server enabled or disabled?" 20 60 2 \
     --yes-button Enable --no-button Disable
   RET=$?
   if [ $RET -eq 0 ]; then
     update-rc.d ssh enable &&
     invoke-rc.d ssh start &&
-    whiptail --msgbox "SSH server enabled" 20 60 1
+    whiptail --fb --msgbox "SSH server enabled" 20 60 1
   elif [ $RET -eq 1 ]; then
     update-rc.d ssh disable &&
-    whiptail --msgbox "SSH server disabled" 20 60 1
+    whiptail --fb --msgbox "SSH server disabled" 20 60 1
   else
     return $RET
   fi
 }
 
-do_webui() {
+
+do_WebUi() {
   whiptail --fb --yesno "Would you like the Minecraft MineOs WebUi?" 20 60 2 \
     --yes-button Yes --no-button No
   RET=$?
@@ -110,11 +112,36 @@ do_webui() {
     Minecraft_UI
     whiptail --fb --msgbox "Installing Please Wait" 20 60 1
   elif [ $RET -eq 1 ]; then
-    update-rc.d ssh disable &&
     whiptail --fb --msgbox "Leaving" 20 60 1
   else
     return $RET
   fi
+}
+
+do_owncloud_install() {
+whiptail --fb --yesno "Owncloud Installer?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    Owncloud-install
+    whiptail --fb --msgbox "Installing Please Wait" 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+}
+
+do_owncloud_limit() {
+  CURRENT_LIMIT=`cat /var/www/owncloud/size | tr -d " \t\n\r"`
+  NEW_LIMIT=$(whiptail --inputbox "Please enter a upload limit." 20 60 "$CURRENT_LIMIT" 3>&1 1>&2 2>&3)
+  if [ $? -eq 0 ]; then
+    echo $NEW_LIMIT > /var/www/owncloud/size     
+    sed -i "s/client_max_body_size.*$CURRENT_LIMIT/client_max_body_size\ $NEW_LIMIT/g" /etc/nginx/sites-available/default
+    sed -i "s/upload_max_filesize = .*$CURRENT_LIMIT/upload_max_filesize = $NEW_LIMIT/g" /etc/php5/fpm/php.ini
+    sed -i "s/post_max_size = .*$CURRENT_LIMIT/post_max_size = $NEW_LIMIT/g" /etc/php5/fpm/php.ini
+  fi
+    whiptail --msgbox "Upload Limit Set" 20 60 1
 }
 
 do_toggle() {
@@ -162,7 +189,7 @@ WARNING!! THIS WILL ERASE ANYTHING THAT IS ON SDA1!
 PLEASE UNPLUG ALL OTHER FLASH DRIVES LEAVING THE ONE YOU WANT.
                YOU HAVE BEEN WARNED! \
 " 20 70 1
-   whiptail --yesno "Last Chance To Back Out!" 20 60 2 \
+   whiptail --fb --yesno "Last Chance To Back Out!" 20 60 2 \
     --yes-button Continue --no-button BackOUT!
   RET=$?
   if [ $RET -eq 0 ]; then
@@ -196,10 +223,10 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 echo "Booting Debian for Cubox (USB) ..." >> /dev/tty0
 EOF
     umount /mnt
-    whiptail --msgbox "All Done, If you want to boot from USB select USB_Boot" 20 60 1
+    whiptail --fb --msgbox "All Done, If you want to boot from USB select USB_Boot" 20 60 1
   elif [ $RET -eq 1 ]; then
     return
-    whiptail --msgbox "Returning to Safty" 20 60 1
+    whiptail --fb --msgbox "Returning to Safty" 20 60 1
   else
   return
   fi
@@ -207,7 +234,7 @@ EOF
 }
 
 do_SD_Boot() {
- whiptail --msgbox "Setting Boot to SD-Card" 20 60 1
+ whiptail --fb --msgbox "Setting Boot to SD-Card" 20 60 1
  mount /dev/mmcblk0p1 /mnt
  sed -i 's*/dev/sda1*/dev/mmcblk0p1*g' /mnt/etc/fstab
  sed -i 's/sda1/mmcblk0p1/g' /mnt/boot/uEnv.txt
@@ -216,12 +243,12 @@ do_SD_Boot() {
 /dev/sda1  /           ext4    defaults,noatime,nodiratime,data=writeback,commit=600,errors=remount-ro        0       0
 EOF
  umount /mnt
- whiptail --msgbox "After Reboot you will be loading off the SD-CARD." 20 60 1
+ whiptail --fb --msgbox "After Reboot you will be loading off the SD-CARD." 20 60 1
  ASK_TO_REBOOT=1
 }	
 
 do_USB_Boot() {
- whiptail --msgbox "Setting Boot to USB" 20 60 1
+ whiptail --fb --msgbox "Setting Boot to USB" 20 60 1
   mount /dev/sda1 /mnt
  sed -i 's*/dev/mmcblk0p1*/dev/sda1*g' /mnt/etc/fstab
  sed -i 's/mmcblk0p1/sda1/g' /boot/uEnv.txt
@@ -230,7 +257,7 @@ do_USB_Boot() {
 /dev/sda1  /           ext4    defaults,noatime        0       0
 EOF
  umount /mnt
- whiptail --msgbox "After Reboot you will be loading off the USB." 20 60 1
+ whiptail --fb --msgbox "After Reboot you will be loading off the USB." 20 60 1
  ASK_TO_REBOOT=1
 }
 
@@ -247,7 +274,7 @@ disable_cuboxi_config_at_boot() {
 do_finish() {
   disable_cuboxi_config_at_boot
   if [ $ASK_TO_REBOOT -eq 1 ]; then
-    whiptail --yesno "Would you like to reboot now?" 20 60 2
+    whiptail --fb --yesno "Would you like to reboot now?" 20 60 2
     if [ $? -eq 0 ]; then # yes
       sync
       reboot
@@ -366,7 +393,7 @@ do
 done
 
 do_internationalisation_menu() {
-  FUN=$(whiptail --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Internationalisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+  FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Internationalisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "I1 Change Locale" "Set up language and regional settings to match your location" \
     "I2 Change Timezone" "Set up timezone to match your location" \
     "I3 Change Keyboard Layout" "Set the keyboard layout to match your keyboard" \
@@ -379,13 +406,13 @@ do_internationalisation_menu() {
       I1\ *) do_change_locale ;;
       I2\ *) do_change_timezone ;;
       I3\ *) do_configure_keyboard ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+      *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
 }
 
 do_advanced_menu() {
-  FUN=$(whiptail --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Advanced Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+  FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Advanced Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "A1 Hostname" "Set the visible name for this Cubox-i on a network" \
     "A2 SSH" "Enable/Disable remote command line access to your Cubox-i using SSH" \
     3>&1 1>&2 2>&3)
@@ -396,13 +423,13 @@ do_advanced_menu() {
     case "$FUN" in
       A1\ *) do_change_hostname ;;
       A2\ *) do_ssh ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
-    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+      *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
 }
 
 do_boot_menu() {
-FUN=$(whiptail --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Boot Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Boot Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "B1 Copy SD2USB" "This will copy the Sd-Card to the USB for USB loading.(Must have empty USB with ext4)" \
     "B2 SD-Card" "This will set the SD-Card as boot device." \
     "B3 USB" "This will set the USB as boot device.(Can only work after Copy SD2USB)" \
@@ -415,6 +442,23 @@ FUN=$(whiptail --title "Cubox-i Software Configuration Tool (cuboxi-config)" --m
       B1\ *) do_SD2USB ;;
       B2\ *) do_SD_Boot ;;
       B3\ *) do_USB_Boot ;;
+      *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+}
+
+do_owncloud_menu() {
+  FUN=$(whiptail --title "Owncloud Menu" --menu "Install or Upload limit?" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+    "O1 Install Owncloud" "" \
+    "O2 Upload Limit" "Changes Upload Limit" \
+    3>&1 1>&2 2>&3)
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    return 0
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      O1\ *) do_owncloud_install ;;
+      O2\ *) do_owncloud_limit ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   fi
@@ -433,7 +477,7 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
   elif [ $RET -eq 0 ]; then
     case "$FUN" in
       C1\ *) do_webui ;;
-      C2\ *) do_Owncloud ;;
+      C2\ *) do_owncloud_menu ;;
       C3\ *) do_LXDE ;;
       C4\ *) do_Gnome_3 ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
