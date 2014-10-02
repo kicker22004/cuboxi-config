@@ -137,6 +137,8 @@ do_owncloud_limit() {
     sed -i "s/upload_max_filesize = .*$CURRENT_LIMIT/upload_max_filesize = $NEW_LIMIT/g" /etc/php5/fpm/php.ini
     sed -i "s/post_max_size = .*$CURRENT_LIMIT/post_max_size = $NEW_LIMIT/g" /etc/php5/fpm/php.ini
   fi
+  /etc/init.d/nginx restart
+  /etc/init.d/php5-fpm restart
     whiptail --msgbox "Upload Limit Set" 20 60 1
 }
 
