@@ -43,6 +43,7 @@ clear
 echo -e "${yellow}Move over default files"
 {
 rm /etc/nginx/sites-available/default
+rm /etc/php5/fpm/php.ini
 cp /usr/src/installers/default /etc/nginx/sites-available/
 cp /usr/src/installers/php.ini /etc/php5/fpm/
 sed -i 's/listen =.*/listen = 127.0.0.1:9000/g' /etc/php5/fpm/pool.d/www.conf
