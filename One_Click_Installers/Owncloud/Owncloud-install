@@ -57,6 +57,6 @@ echo "1G" > /var/www/owncloud/size
 chown -R www-data:www-data /var/www
 clear
 echo -e "${green}As Always thanks for checking out my guides, Please leave a comment if it helped you."
-tput-sgr0
+tput sgr0
 sleep 10
-done
+exit 0
