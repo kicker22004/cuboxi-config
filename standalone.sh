@@ -30,14 +30,19 @@ do_standalone() {
   RET=$?
   if [ $RET -eq 0 ]; then
   (echo 123; echo 123; echo) | adduser cubox
+  mkdir /usr/src/installers
   cp $SRC/cuboxi-config_standalone /usr/bin/cuboxi-config
   cp $SRC/motd /etc/init.d/
   cp $SRC/bootsplash /etc/init.d/
   cp One_Click_Installers/Minecraft_MineOs_WebUI/Auto_MineOs_Install /usr/bin/Minecraft_UI
+  cp One_Click_Installers/Owncloud/Owncloud-install /usr/bin/
+  cp One_Click_Installers/Owncloud/default /usr/src/installers/
+  cp One_Click_Installers/Owncloud/php.ini /usr/src/installers/
   chmod +x /usr/bin/cuboxi-config
   chmod +x /etc/init.d/bootsplash
   chmod +x /etc/init.d/motd
-  chmod +x /usr/bin/Minecraft_UI  
+  chmod +x /usr/bin/Minecraft_UI
+  chmod +x /usr/bin/Owncloud-install  
   update-rc.d motd defaults
   update-rc.d bootsplash default
   apt-get update
