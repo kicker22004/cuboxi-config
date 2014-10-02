@@ -31,7 +31,7 @@ you have heavily customised your installation.\
 " 20 70 1
 }
 
-do_expand_rootfs(){
+do_expand_rootfs() {
  whiptail --msgbox "Resize praparing" 20 60 1
  update-rc.d cubian-firstrun defaults
  whiptail --msgbox "Resize will finish on reboot" 20 60 1
