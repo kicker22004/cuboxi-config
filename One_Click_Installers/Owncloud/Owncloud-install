@@ -1,0 +1,61 @@
+#!/bin/bash
+
+yellow='\e[1;33m'
+green='\e[1;32m'
+red='\e[0;31m'
+white='\e[1;37m'
+log='logger.txt'
+
+clear
+#Update system
+echo -e "${yellow}Updating"
+sudo apt-get update &> "${log}"
+
+#Add Users
+echo -e "${yellow}Adding users"
+{
+groupadd www-data
+usermod -a -G www-data www-data
+} &> "${log}"
+
+#Make Work folders.
+echo -e "${yellow}Making Folders"
+{
+sudo mkdir -p /var/www/owncloud
+echo "1G" > /var/www/owncloud/size
+mkdir -p /srv/http/owncloud/data
+chown www-data:www-data /srv/http/owncloud/data
+} &> "${log}"
+
+#Grab Needed Files
+echo -e "${yellow}Getting Prerequisites..this will take a bit.."
+sudo apt-get install -y git bzip2 nginx openssl ssl-cert php5-cli php5-sqlite php5-gd php5-curl php5-common php5-cgi sqlite3 php-pear php-apc curl libapr1 libtool curl libcurl4-openssl-dev php-xml-parser php5 php5-dev php5-gd php5-fpm memcached php5-memcache varnish
+clear
+
+#Time for cert keys!
+echo -e "${yellow}Generating openssl key (yes it was updated!)"
+echo -e "${green}"
+(echo US; echo .; echo .; echo .; echo .; echo .; echo .;) | openssl req $@ -new -x509 -days 365 -nodes -out /etc/nginx/cert.pem -keyout /etc/nginx/cert.key 
+chmod 600 /etc/nginx/cert.pem
+chmod 600 /etc/nginx/cert.key
+clear
+
+#Remove and copy over Default Nginx config
+echo -e "${yellow}Move over default files"
+{
+rm /etc/nginx/sites-available/default
+cp /usr/src/installers/default /etc/nginx/sites-available/
+cp /usr/src/installers/php.ini /etc/php5/fpm/
+sed -i 's/listen =.*/listen = 127.0.0.1:9000/g' /etc/php5/fpm/pool.d/www.conf
+} &> "${log}"
+
+#Install Owncloud
+echo -e "${yellow}Installing Owncloud"
+wget https://download.owncloud.org/community/owncloud-7.0.2.tar.bz2
+tar xvf owncloud*
+mv owncloud/ /var/www/
+chown -R www-data:www-data /var/www
+clear
+echo -e "${green}As Always thanks for checking out my guides, Please leave a comment if it helped you."
+sleep 10
+done
