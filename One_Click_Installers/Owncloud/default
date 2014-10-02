@@ -12,6 +12,7 @@ ssl_certificate_key /etc/nginx/cert.key;
 root /var/www/owncloud; 
 index index.php; 
 client_max_body_size 1G;
+client_body_buffer_size 200M;
 fastcgi_buffers 64 4K; 
 location ~ ^/(data|config|\.ht|db_structure\.xml|README) { 
  deny all; 
@@ -34,6 +35,7 @@ location ~ ^(?<script_name>.+?\.php)(?<path_info>/.*)?$ {
  include fastcgi_params; 
  fastcgi_param PATH_INFO $path_info; 
  fastcgi_param HTTPS on; 
- fastcgi_pass 127.0.0.1:9000; 
+ fastcgi_pass 127.0.0.1:9000;
+ fastcgi_read_timeout 600;
 } 
 }
