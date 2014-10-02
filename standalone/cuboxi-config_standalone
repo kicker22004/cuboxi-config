@@ -100,7 +100,7 @@ do_ssh() {
 }
 
 
-do_WebUi() {
+do_webUi() {
   whiptail --fb --yesno "Would you like the Minecraft MineOs WebUi?" 20 60 2 \
     --yes-button Yes --no-button No
   RET=$?
@@ -112,6 +112,32 @@ do_WebUi() {
   else
     return $RET
   fi
+}
+
+do_owncloud_install() {
+whiptail --fb --yesno "Owncloud Installer?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    Owncloud-install
+    whiptail --fb --msgbox "Installing Please Wait" 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+}
+
+do_owncloud_limit() {
+  CURRENT_LIMIT=`cat /var/www/owncloud/size | tr -d " \t\n\r"`
+  NEW_LIMIT=$(whiptail --inputbox "Please enter a upload limit." 20 60 "$CURRENT_LIMIT" 3>&1 1>&2 2>&3)
+  if [ $? -eq 0 ]; then
+    echo $NEW_LIMIT > /var/www/owncloud/size     
+    sed -i "s/client_max_body_size.*$CURRENT_LIMIT/client_max_body_size\ $NEW_LIMIT/g" /etc/nginx/sites-available/default
+    sed -i "s/upload_max_filesize = .*$CURRENT_LIMIT/upload_max_filesize = $NEW_LIMIT/g" /etc/php5/fpm/php.ini
+    sed -i "s/post_max_size = .*$CURRENT_LIMIT/post_max_size = $NEW_LIMIT/g" /etc/php5/fpm/php.ini
+  fi
+    whiptail --msgbox "Upload Limit Set" 20 60 1
 }
 
 do_toggle() {
@@ -417,6 +443,23 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
   fi
 }
 
+do_owncloud_menu() {
+  FUN=$(whiptail --title "Owncloud Menu" --menu "Install or Upload limit?" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+    "O1 Install Owncloud" "" \
+    "O2 Upload Limit" "Changes Upload Limit" \
+    3>&1 1>&2 2>&3)
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    return 0
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      O1\ *) do_owncloud_install ;;
+      O2\ *) do_owncloud_limit ;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+}
+
 do_one_click_menu() {
 FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "One Click Installer Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "C1 Minecraft WebUi" "This will install the great MineOs WebUi for Minecraft!" \
@@ -430,7 +473,7 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
   elif [ $RET -eq 0 ]; then
     case "$FUN" in
       C1\ *) do_webui ;;
-      C2\ *) do_Owncloud ;;
+      C2\ *) do_owncloud_menu ;;
       C3\ *) do_LXDE ;;
       C4\ *) do_Gnome_3 ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
