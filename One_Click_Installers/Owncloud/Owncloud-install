@@ -21,6 +21,7 @@ usermod -a -G www-data www-data
 #Make Work folders.
 echo -e "${yellow}Making Folders"
 {
+mkdir /var/www
 mkdir -p /srv/http/owncloud/data
 chown www-data:www-data /srv/http/owncloud/data
 } &> "${log}"
