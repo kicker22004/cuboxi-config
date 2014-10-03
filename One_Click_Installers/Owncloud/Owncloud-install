@@ -40,7 +40,7 @@ chmod 600 /etc/nginx/cert.key
 clear
 
 #Remove and copy over Default Nginx config
-echo -e "${yellow}Move over default files"
+echo -e "${green}Move over default files"
 {
 rm /etc/nginx/sites-available/default
 rm /etc/php5/fpm/php.ini
@@ -58,6 +58,8 @@ echo "100M" > /var/www/owncloud/size
 chown -R www-data:www-data /var/www
 service nginx restart
 service php5-fpm restart
+rm owncloud*
+rm logger.txt
 clear
 echo -e "${green}As Always thanks for checking out my guides, Please leave a comment if it helped you."
 tput sgr0
