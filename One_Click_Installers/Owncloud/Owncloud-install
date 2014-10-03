@@ -54,7 +54,7 @@ echo -e "${yellow}Installing Owncloud"
 wget https://download.owncloud.org/community/owncloud-7.0.2.tar.bz2
 tar xvf owncloud*
 mv owncloud/ /var/www/
-echo "1G" > /var/www/owncloud/size
+echo "100M" > /var/www/owncloud/size
 chown -R www-data:www-data /var/www
 service nginx restart
 service php5-fpm restart
