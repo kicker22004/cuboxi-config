@@ -169,7 +169,7 @@ whiptail --fb --yesno "xfce Installer" 20 60 2 \
   RET=$?
   if [ $RET -eq 0 ]; then
   apt-get update
-  apt-get install -y xorg xfce lightdm
+  apt-get install -y xorg xfce4 lightdm
   sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=cubox/"
   sed -i 's/^Session=.*$/Session=xfce/' /home/cubox/.dmrc
     whiptail --fb --msgbox "You should restart now." 20 60 1
@@ -186,6 +186,20 @@ whiptail --fb --yesno "Return to Console?" 20 60 2 \
   RET=$?
   if [ $RET -eq 0 ]; then
     update-rc.d lightdm disable 2
+    whiptail --fb --msgbox "You should restart now." 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+}
+
+do_lightdm() {
+whiptail --fb --yesno "Return to GUI?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    update-rc.d lightdm enable 2
     whiptail --fb --msgbox "You should restart now." 20 60 1
   elif [ $RET -eq 1 ]; then
     whiptail --fb --msgbox "Leaving" 20 60 1
@@ -518,9 +532,10 @@ do_one_click_menu() {
 FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "One Click Installer Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "C1 Minecraft WebUi" "This will install the great MineOs WebUi for Minecraft!" \
     "C2 Owncloud" "This will Setup Owncloud fast and simple." \
-    "C3 LXDE" "Sometimes we all need a GUI, Make it LXDE?" \
+    "C3 LXDE" "Sometimes we all need a GUI" \
     "C4 xfce" "xfce your thing? Click here!" \
     "C5 console" "Done with GUI? Return to console" \
+    "C6 GUI-Return" "Return to GUI" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -532,6 +547,7 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
       C3\ *) do_lxde ;;
       C4\ *) do_xfce ;;
       C5\ *) do_console ;;
+      C6\ *) do_lightdm ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
