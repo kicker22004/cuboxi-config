@@ -27,7 +27,7 @@ do_about() {
 This tool provides a straight-forward way of doing initial
 configuration of the Cubox-i (modified version of the Raspberry Pi rasp-config). Although it can be run
 at any time, some of the options may have difficulties if
-you have heavily customised your installation.\
+you have heavily customised your installation. Maintained By Kicker22004 \
 " 20 70 1
 }
 
@@ -562,7 +562,7 @@ while true; do
     "5 Internationalisation Options" "Set up language and regional settings to match your location" \
     "6 Boot Options" "SD/USB Boot" \
     "7 Advanced Options" "Configure advanced settings" \
-    "8 One Click Installers" "WIP" \
+    "8 One Click Installers" "One stop shop for all your install needs!" \
     "9 About Cuboxi-config" "Information about this configuration tool" \
     3>&1 1>&2 2>&3)
   RET=$?
