@@ -266,23 +266,7 @@ cat  <<EOF >/home/cubox/exclude.list
 EOF
  echo "THIS MAY TAKE A FEW MINUTES, PLEASE WAIT..."
     rsync -aH -p -P --exclude-from=/home/cubox/exclude.list  /  /mnt
-cat <<EOF >/mnt/etc/init.d/bootsplash
-#! /bin/sh
-### BEGIN INIT INFO
-# Provides:          bootsplash
-# Required-Start:    
-# Required-Stop:     glibc
-# Default-Start:     S
-# Default-Stop:
-# Short-Description: Show this to console during boot
-### END INIT INFO
-
-
-PATH=/sbin:/usr/sbin:/bin:/usr/bin
-
-echo "Booting Debian for Cubox (USB) ..." >> /dev/tty0
-fbi -vt 1 -noverbose -d /dev/fb0 /etc/bootsplash.png
-EOF
+    sed -i 's/SD-CARD/USB/' /mnt/etc/init.d/bootsplash
     umount /mnt
     whiptail --fb --msgbox "All Done, If you want to boot from USB select USB_Boot" 20 60 1
   elif [ $RET -eq 1 ]; then
