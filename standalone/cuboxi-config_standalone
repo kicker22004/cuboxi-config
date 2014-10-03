@@ -48,6 +48,7 @@ do_change_Root() {
 }
 
 do_configure_keyboard() {
+  apt-get install keyboard-configuration
   dpkg-reconfigure keyboard-configuration &&
   printf "Reloading keymap. This may take a short while\n" &&
   invoke-rc.d keyboard-setup start
