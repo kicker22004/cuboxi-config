@@ -142,6 +142,56 @@ do_owncloud_limit() {
     whiptail --msgbox "Upload Limit Set" 20 60 1
 }
 
+do_lxde() {
+whiptail --fb --yesno "LXDE Installer" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    apt-get update
+  (echo ) | apt-get install -y xorg 
+  apt-get install -y lxde lightdm
+  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=cubox/"
+  sed -i 's/^Session=.*$/Session=LXDE/' /home/cubox/.dmrc
+    whiptail --fb --msgbox "You should restart now." 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+}
+
+do_xfce() {
+whiptail --fb --yesno "xfce Installer" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    apt-get update
+  (echo ) | apt-get install -y xorg 
+  apt-get install -y xfce lightdm
+  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=cubox/"
+  sed -i 's/^Session=.*$/Session=xfce/' /home/cubox/.dmrc
+    whiptail --fb --msgbox "You should restart now." 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+}
+
+do_console() {
+whiptail --fb --yesno "Return to Console?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    update-rc.d lightdm disable 2
+    whiptail --fb --msgbox "You should restart now." 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+}
+
 do_toggle() {
   whiptail --fb --yesno "Toggle Outputs" 20 60 2 \
     --yes-button HDMI --no-button SPDIF
@@ -467,7 +517,8 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
     "C1 Minecraft WebUi" "This will install the great MineOs WebUi for Minecraft!" \
     "C2 Owncloud" "This will Setup Owncloud fast and simple." \
     "C3 LXDE" "Sometimes we all need a GUI, Make it LXDE?" \
-    "C4 Gnome 3" "Gnome your thing? Click here!" \
+    "C4 xfce" "xfce your thing? Click here!" \
+    "C5 console" "Done with GUI? Return to console" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -476,8 +527,9 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
     case "$FUN" in
       C1\ *) do_webui ;;
       C2\ *) do_owncloud_menu ;;
-      C3\ *) do_LXDE ;;
-      C4\ *) do_Gnome_3 ;;
+      C3\ *) do_lxde ;;
+      C4\ *) do_xfce ;;
+      C5\ *) do_console ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
