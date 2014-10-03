@@ -281,6 +281,7 @@ cat <<EOF >/mnt/etc/init.d/bootsplash
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 
 echo "Booting Debian for Cubox (USB) ..." >> /dev/tty0
+fbi -vt 1 -noverbose -d /dev/fb0 /etc/bootsplash.png
 EOF
     umount /mnt
     whiptail --fb --msgbox "All Done, If you want to boot from USB select USB_Boot" 20 60 1
