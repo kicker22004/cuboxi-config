@@ -161,6 +161,7 @@ whiptail --fb --yesno "LXDE Installer" 20 60 2 \
   else
     return $RET
   fi
+  ASK_TO_REBOOT=1
 }
 
 do_xfce() {
@@ -178,6 +179,7 @@ whiptail --fb --yesno "xfce Installer" 20 60 2 \
   else
     return $RET
   fi
+  ASK_TO_REBOOT=1
 }
 
 do_console() {
@@ -192,6 +194,7 @@ whiptail --fb --yesno "Return to Console?" 20 60 2 \
   else
     return $RET
   fi
+  ASK_TO_REBOOT=1
 }
 
 do_lightdm() {
@@ -206,6 +209,7 @@ whiptail --fb --yesno "Return to GUI?" 20 60 2 \
   else
     return $RET
   fi
+  ASK_TO_REBOOT=1
 }
 
 do_toggle() {
