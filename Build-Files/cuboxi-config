@@ -152,7 +152,7 @@ whiptail --fb --yesno "LXDE Installer" 20 60 2 \
   RET=$?
   if [ $RET -eq 0 ]; then
     apt-get update
-  apt-get install -y xorg lxde lightdm
+  apt-get install -y xorg lxde lightdm iceweasel
   sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=cubox/"
   sed -i 's/^Session=.*$/Session=LXDE/' /home/cubox/.dmrc
     whiptail --fb --msgbox "You should restart now." 20 60 1
@@ -170,7 +170,7 @@ whiptail --fb --yesno "xfce Installer" 20 60 2 \
   RET=$?
   if [ $RET -eq 0 ]; then
   apt-get update
-  apt-get install -y xorg xfce4 lightdm
+  apt-get install -y xorg xfce4 lightdm iceweasel
   sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=cubox/"
   sed -i 's/^Session=.*$/Session=xfce/' /home/cubox/.dmrc
     whiptail --fb --msgbox "You should restart now." 20 60 1
