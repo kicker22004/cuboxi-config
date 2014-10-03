@@ -8,7 +8,7 @@ To install this on your Debian based image please follow these commands.
 
 git clone https://github.com/kicker22004/cuboxi-config.git
 
-cd cuboxi-config
+[code]cd cuboxi-config[/code]
 
 sudo chmod +x standalone.sh
 
