@@ -30,6 +30,7 @@ do_standalone() {
   RET=$?
   if [ $RET -eq 0 ]; then
   (echo 123; echo 123; echo) | adduser cubox
+  touch /home/cubox/.dmrc
   mkdir /usr/src/installers
   cp $SRC/cuboxi-config_standalone /usr/bin/cuboxi-config
   cp $SRC/motd /etc/init.d/
