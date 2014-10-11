@@ -226,6 +226,21 @@ whiptail --fb --yesno "Return to GUI?" 20 60 2 \
   ASK_TO_REBOOT=1
 }
 
+do_minidlna() {
+whiptail --fb --yesno "Minidlna?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    echo "placeholder
+    whiptail --fb --msgbox "You should restart now." 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+  ASK_TO_REBOOT=1
+}
+
 do_toggle() {
   whiptail --fb --yesno "Toggle Outputs" 20 60 2 \
     --yes-button HDMI --no-button SPDIF
