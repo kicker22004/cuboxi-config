@@ -413,6 +413,23 @@ do_finish() {
   exit 0
 }
 
+do_update() {
+whiptail --fb --yesno "You can't live without the best, Right?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+  git clone https://github.com/kicker22004/cuboxi-config.git /tmp/cuboxi-config/
+  cp /tmp/cuboxi-config/standalone/cuboxi-config_standalone /usr/bin/cuboxi-config
+  chmod +x /usr/bin/cuboxi-config
+  rm -rf /tmp/cuboxi-config
+    whiptail --fb --msgbox "Your Up To Date!" 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+}
+
 # $1 = filename, $2 = key name
 get_json_string_val() {
   sed -n -e "s/^[[:space:]]*\"$2\"[[:space:]]*:[[:space:]]*\"\(.*\)\"[[:space:]]*,$/\1/p" $1
@@ -636,6 +653,7 @@ while true; do
     "7 Advanced Options" "Configure advanced settings" \
     "8 One Click Installers" "One stop shop for all your install needs!" \
     "9 About Cuboxi-config" "Information about this configuration tool" \
+    "10 Update" "Update cuboxi-config" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -651,6 +669,7 @@ while true; do
       7\ *) do_advanced_menu ;;
       8\ *) do_one_click_menu ;;
       9\ *) do_about ;;
+     10\ *) do_update ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   else
