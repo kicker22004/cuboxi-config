@@ -286,7 +286,7 @@ EOF
  update-rc.d minidlna defaults
  service minidlna start
  minidlna -R
- whiptail --fb --msgbox "MiniDLNA has been installed, Your Files should be placed in /home/cubox/Music,Photos,Videos!$
+ whiptail --fb --msgbox "MiniDLNA has been installed, Your Files should be placed in /home/cubox/Music,Photos,Videos!" 20 60 1
 }
 
 do_toggle() {
