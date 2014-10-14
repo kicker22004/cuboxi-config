@@ -221,6 +221,74 @@ whiptail --fb --yesno "Return to GUI?" 20 60 2 \
   fi
 }
 
+do_minidlna() {
+whiptail --fb --yesno "MiniDLNA?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    install_minidlna
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+}
+
+install_minidlna() {
+apt-get install minidlna
+SRC=/etc/minidlna.conf
+
+#Shortcuts!
+DB=db_dir=/var/lib/minidlna NEW_DB=db_dir=/home/cubox/.minidlna
+MEDIA=media_dir=/var/lib/minidlna
+NEW_MEDIA=media_dir=A,/home/cubox/Music/
+
+#Make Folders if necessary.
+  DIR='/home/cubox'
+ if [ -d "$DIR/Music" ]; then
+  echo "Folder Exists move on!"
+ else
+  mkdir $DIR/Music
+ fi
+ if [ -d "$DIR/Photos" ]; then
+  echo "Folder Exists move on!"
+ else
+  mkdir $DIR/Photos
+ fi
+ if [ -d "$DIR/Videos" ]; then
+  echo "Folder Exists move on!"
+ else
+  mkdir $DIR/Videos
+ fi
+ if [ -d "$DIR/.minidlna" ]; then
+  echo "Folder Exists move on!"
+ else
+  mkdir $DIR/.minidlna
+ fi
+
+#I guess we should own these Folders!
+  chown -R cubox:cubox /home/cubox
+#Make Temp File.
+cat <<EOF >add.txt
+media_dir=V,/home/cubox/Videos/
+media_dir=P,/home/cubox/Photos/
+EOF
+
+#Modify Conf.
+ sed -i "s#$MEDIA#$NEW_MEDIA#" $SRC
+ sed -i '/cubox/r add.txt' $SRC
+  sed -i 's/^#db_dir/db_dir/g' $SRC
+ sed -i 's/^#log_dir/log_dir/g' $SRC
+ sed -i "s#$DB#$NEW_DB#" $SRC
+
+#cleanup
+ rm add.txt
+ update-rc.d minidlna defaults
+ service minidlna start
+ minidlna -R
+ whiptail --fb --msgbox "MiniDLNA has been installed, Your Files should be placed in /home/cubox/Music,Photos,Videos!$
+}
+
 do_toggle() {
   whiptail --fb --yesno "Toggle Outputs" 20 60 2 \
     --yes-button HDMI --no-button SPDIF
@@ -534,6 +602,7 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
     "C4 xfce" "xfce your thing? Click here!" \
     "C5 console" "Done with GUI? Return to console" \
     "C6 GUI-Return" "Return to GUI" \
+    "C7 MiniDLNA" "Installs Minidlna" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -546,6 +615,7 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
       C4\ *) do_xfce ;;
       C5\ *) do_console ;;
       C6\ *) do_lightdm ;;
+      C7\ *) do_minidlna ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
