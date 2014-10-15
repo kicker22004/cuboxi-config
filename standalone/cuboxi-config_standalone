@@ -289,6 +289,10 @@ EOF
  whiptail --fb --msgbox "MiniDLNA has been installed, Your Files should be placed in /home/cubox/Music,Photos,Videos!" 20 60 1
 }
 
+do_samba() {
+ whiptail --fb --msgbox "Placeholder" 20 60 1
+}
+
 do_toggle() {
   whiptail --fb --yesno "Toggle Outputs" 20 60 2 \
     --yes-button HDMI --no-button SPDIF
@@ -620,6 +624,7 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
     "C5 console" "Done with GUI? Return to console" \
     "C6 GUI-Return" "Return to GUI" \
     "C7 MiniDLNA" "Installs Minidlna" \
+    "C8 Samba" "Installs Samba" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -633,6 +638,7 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
       C5\ *) do_console ;;
       C6\ *) do_lightdm ;;
       C7\ *) do_minidlna ;;
+      C8\ *) do_samba ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
