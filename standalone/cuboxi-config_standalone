@@ -309,7 +309,7 @@ EOF
 whiptail --fb --msgbox "You will now be asked for a samba password TWICE!, Please remember this for later." 20 60 1
 smbpasswd -a cubox
 service samba restart
-whiptail --fb --msgbox "Samba is now fully installed and ready to go, File location is (/home/cubox). To make chan$
+whiptail --fb --msgbox "Samba is now fully installed and ready to go, File location is (/home/cubox). To make changes to the config use (sudo nano /etc/samba/smb.conf)." 20 60 1
   elif [ $RET -eq 1 ]; then
     whiptail --fb --msgbox "Leaving" 20 60 1
   else
