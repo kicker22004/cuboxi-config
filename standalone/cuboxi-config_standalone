@@ -317,6 +317,63 @@ whiptail --fb --msgbox "Samba is now fully installed and ready to go, File locat
   fi
 }
 
+do_transmission() {
+whiptail --fb --yesno "Install Transmission?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+TRANS_SRC=/etc/transmission-daemon/settings.json
+CURRENT_PASS='rpc-password": "'
+ADD='"'
+CURRENT_USER='rpc-username": "'
+SAVE_DIR='download-dir": '
+NEW_SAVE='"/home/cubox/Torrent/completed",'
+PROGRESS_SAVE='incomplete-dir": '
+NEW_PROGRESS='"/home/cubox/Torrent/progress",'
+WHITELIST='rpc-whitelist-enabled": '
+SECURITY='rpc-authentication-required": '
+###################################################
+
+sudo apt-get -y install transmission-daemon
+mkdir /home/cubox/Torrent
+mkdir /home/cubox/Torrent/progress
+mkdir /home/cubox/Torrent/completed
+mkdir /home/cubox/Downloads
+sudo usermod -a -G debian-transmission cubox
+chgrp debian-transmission /home/cubox/Torrent/progress
+chgrp debian-transmission /home/cubox/Torrent/completed
+chgrp debian-transmission /home/cubox/Downloads
+chmod 770 /home/cubox/Torrent/progress
+chmod 770 /home/cubox/Torrent/completed
+chmod 770 /home/cubox/Downloads
+sudo service transmission-daemon stop
+sudo adduser cubox debian-transmission
+sed -i 's/debian-transmission/cubox/' /etc/init.d/transmission-daemon
+chown cubox -R /var/lib/transmission-daemon/info/
+chown cubox -R /home/cubox/Torrent/completed
+chown cubox -R /home/cubox/Torrent/progress
+chown cubox -R /home/cubox/Downloads
+chown cubox -R /etc/transmission-daemon/settings.json
+PASS=$(whiptail --inputbox "Please enter a password" 20 60 3>&1 1>&2 2>&3)
+  if [ $? -eq 0 ]; then
+    echo $PASS > tmp.txt
+sed -i "s/${CURRENT_PASS}.*/${CURRENT_PASS}${PASS}${ADD},/g" $TRANS_SRC
+rm tmp.txt
+sed -i "s/${CURRENT_USER}.*/${CURRENT_USER}cubox${ADD},/g" $TRANS_SRC
+sed -i "s#${SAVE_DIR}.*#${SAVE_DIR}${NEW_SAVE}#g" $TRANS_SRC
+sed -i "s#${PROGRESS_SAVE}.*#${PROGRESS_SAVE}${NEW_PROGRESS}#g" $TRANS_SRC
+sed -i "s/${WHITELIST}.*/${WHITELIST}false,/g" $TRANS_SRC
+sed -i "s/${SECURITY}.*/${SECURITY}true,/g" $TRANS_SRC
+service transmission-daemon start 
+whiptail --fb --msgbox "Transmission is now installed, Please enter (http://YOURIP:9091) into your browser to login with user cubox and your password." 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+fi
+}
+
 do_toggle() {
   whiptail --fb --yesno "Toggle Outputs" 20 60 2 \
     --yes-button HDMI --no-button SPDIF
@@ -649,6 +706,7 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
     "C6 GUI-Return" "Return to GUI" \
     "C7 MiniDLNA" "Installs Minidlna" \
     "C8 Samba" "Installs Samba" \
+    "C9 Transmission" "Install Transmission-daemon" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -663,6 +721,7 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
       C6\ *) do_lightdm ;;
       C7\ *) do_minidlna ;;
       C8\ *) do_samba ;;
+      C9\ *) do_transmission ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
