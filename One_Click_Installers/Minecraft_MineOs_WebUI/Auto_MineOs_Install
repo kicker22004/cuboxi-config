@@ -106,8 +106,8 @@ sleep 2
 echo -e "${green}ALL DONE, THANK THE DEV'S FOR THEIR TIME AND ENERGY!."
 sleep 2
 echo -e "${green} 100%"
-echo "Enjoy Your New Cubox-i4pro Server with an amazing WebUI!."
+echo "Enjoy Your New IMX6 Server with an amazing WebUI!."
 tput sgr0
 sleep 5
-cuboxi-config
+imx6-config
 exit 0
