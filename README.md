@@ -1,14 +1,14 @@
-cuboxi-config
+imx6-config
 ============
 
-Configuration tool for the Cubox-I modified from the Raspberry Pi
+Configuration tool for the imx6 based boards, modified from the Raspberry Pi
 
 
 To install this on your Debian based image please follow these commands.
 
-  git clone https://github.com/kicker22004/cuboxi-config.git
+  git clone https://github.com/kicker22004/imx6-config.git
 
-  cd cuboxi-config
+  cd imx6-config
 
   sudo chmod +x standalone.sh
 
@@ -16,4 +16,4 @@ To install this on your Debian based image please follow these commands.
 
 Follow install steps then reboot.
 
-To open after reboot just type (sudo cuboxi-config)
+To open after reboot just type (sudo imx6-config)
