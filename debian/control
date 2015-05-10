@@ -1,4 +1,4 @@
-Source: cuboxi-config
+Source: imx6-config
 Section: unknown
 Priority: optional
 Maintainer: unknown <unknown>
@@ -8,7 +8,7 @@ Homepage: http://www.solid-run.com/community/topic1745.html
 Vcs-Git: https://github.com/mxOBS/deb-pkg_cuboxi-config.git
 Vcs-Browser: https://github.com/mxOBS/deb-pkg_cuboxi-config
 
-Package: cuboxi-config
+Package: imx6-config
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, fbi, build-essential
 Description: Configuration tool for Cubox-i and Hummingboard

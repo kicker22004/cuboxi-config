@@ -1,10 +1,4 @@
 #! /usr/bin/dh-exec
-standalone/cuboxi-config_standalone => /usr/bin/cuboxi-config
-One_Click_Installers/Owncloud/default /usr/src/installers/
-One_Click_Installers/Owncloud/php.ini /usr/src/installers/
-One_Click_Installers/Minecraft_MineOs_WebUI/Auto_MineOs_Install => /usr/bin/Minecraft_UI
-One_Click_Installers/Owncloud/Owncloud-install ./usr/bin/
-One_Click_Installers/Owncloud/default /usr/src/installers/
-One_Click_Installers/Owncloud/php.ini /usr/src/installers/
-standalone/motd /etc/init.d/
+standalone/imx6-config_standalone => /usr/bin/imx6-config
+Build-Files/imx6-config.sh /etc/profile.d/
 standalone/bootsplash /etc/init.d/
