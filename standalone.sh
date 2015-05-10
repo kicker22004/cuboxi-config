@@ -1,5 +1,5 @@
 #!/bin/sh
-# Part of cuboi-config http://github.com/kicker22004/cuboxi-config
+# Part of imx6-config http://github.com/kicker22004/imx6-config
 #
 # See LICENSE file for copyright and license details
 
@@ -32,14 +32,14 @@ do_standalone() {
   (echo 123; echo 123; echo) | adduser cubox
   touch /home/cubox/.dmrc
   mkdir /usr/src/installers
-  cp $SRC/cuboxi-config_standalone /usr/bin/cuboxi-config
+  cp $SRC/imx6-config_standalone /usr/bin/imx6-config
   cp $SRC/motd /etc/init.d/
   cp $SRC/bootsplash /etc/init.d/
   cp One_Click_Installers/Minecraft_MineOs_WebUI/Auto_MineOs_Install /usr/bin/Minecraft_UI
   cp One_Click_Installers/Owncloud/Owncloud-install /usr/bin/
   cp One_Click_Installers/Owncloud/default /usr/src/installers/
   cp One_Click_Installers/Owncloud/php.ini /usr/src/installers/
-  chmod +x /usr/bin/cuboxi-config
+  chmod +x /usr/bin/imx6-config
   chmod +x /etc/init.d/bootsplash
   chmod +x /etc/init.d/motd
   chmod +x /usr/bin/Minecraft_UI
@@ -57,7 +57,7 @@ echo $PCT;
 sleep .020;
 done; ) | whiptail --fb --title "Installing.." --gauge "Copying files and permissions, Please Wait.." 20 60 1
   cd ..
-  rm -rf cuboxi-config
+  rm -rf imx6-config
  whiptail --fb --msgbox "Please Reboot To Complete The Install." 20 60 1
  else
   return
@@ -81,8 +81,8 @@ do_finish() {
 #
 calc_wt_size
 while true; do
-  FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
-    "1 Standalone installer" "This will install cuboxi-config on your debian image" \
+  FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (imx6-config)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
+    "1 Standalone installer" "This will install imx6-config on your debian image" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
