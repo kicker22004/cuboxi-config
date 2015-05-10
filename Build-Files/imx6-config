@@ -1,5 +1,5 @@
 #!/bin/sh
-# Part of cuboi-config http://github.com/kicker22004/cuboxi-config
+# Part of imx6-config http://github.com/kicker22004/imx6-config
 #
 # See LICENSE file for copyright and license details
 
@@ -25,23 +25,19 @@ calc_wt_size() {
 do_about() {
   whiptail --fb --msgbox "\
 This tool provides a straight-forward way of doing initial
-configuration of the Cubox-i (modified version of the Raspberry Pi rasp-config). Although it can be run
+configuration of the IMX6 (modified version of the Raspberry Pi rasp-config). Although it can be run
 at any time, some of the options may have difficulties if
-you have heavily customised your installation. Maintained by Kicker22004\
+you have heavily customised your installation. Maintained By Kicker22004 \
 " 20 70 1
 }
 
 do_expand_rootfs(){
- whiptail --fb --msgbox "Resize praparing" 20 60 1
- update-rc.d cubian-firstrun defaults
- whiptail --fb --msgbox "Resize will finish on reboot" 20 60 1
- ASK_TO_REBOOT=1
+ whiptail --fb --msgbox "Only for builds! (You used the standalone installer)" 20 60 1
 }
 
-
 do_change_pass() {
-  whiptail --fb --msgbox "You will now be asked to enter a new password for the cubox user" 20 60 1
-  passwd cubox &&
+  whiptail --fb --msgbox "You will now be asked to enter a new password for the imx6 user" 20 60 1
+  passwd imx6 &&
   whiptail --fb --msgbox "Password changed successfully" 20 60 1
 }
 
@@ -52,6 +48,7 @@ do_change_Root() {
 }
 
 do_configure_keyboard() {
+  apt-get install keyboard-configuration
   dpkg-reconfigure keyboard-configuration &&
   printf "Reloading keymap. This may take a short while\n" &&
   invoke-rc.d keyboard-setup start
@@ -161,12 +158,12 @@ whiptail --fb --yesno "LXDE Installer" 20 60 2 \
 
 install_lxde() {
  if dpkg -s lxde; then
-  sed -i 's/^Session=.*$/Session=LXDE/' /home/cubox/.dmrc
+  sed -i 's/^Session=.*$/Session=LXDE/' /home/imx6/.dmrc
   else
   apt-get update
   apt-get install -y xorg lxde lightdm iceweasel
-  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=cubox/"
-  sed -i 's/^Session=.*$/Session=LXDE/' /home/cubox/.dmrc
+  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=imx6/"
+  sed -i 's/^Session=.*$/Session=LXDE/' /home/imx6/.dmrc
   whiptail --fb --msgbox "You should restart now." 20 60 1
 fi
 }
@@ -186,12 +183,12 @@ whiptail --fb --yesno "xfce Installer" 20 60 2 \
 
 install_xfce() {
   if dpkg -s xfce4; then
-  sed -i 's/^Session=.*$/Session=xfce/' /home/cubox/.dmrc
+  sed -i 's/^Session=.*$/Session=xfce/' /home/imx6/.dmrc
   else
   apt-get update
   apt-get install -y xorg xfce4 lightdm iceweasel
-  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=cubox/"
-  sed -i 's/^Session=.*$/Session=xfce/' /home/cubox/.dmrc
+  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=imx6/"
+  sed -i 's/^Session=.*$/Session=xfce/' /home/imx6/.dmrc
   whiptail --fb --msgbox "You should restart now." 20 60 1
 fi
 }
@@ -208,7 +205,6 @@ whiptail --fb --yesno "Return to Console?" 20 60 2 \
   else
     return $RET
   fi
-  ASK_TO_REBOOT=1
 }
 
 do_lightdm() {
@@ -223,22 +219,159 @@ whiptail --fb --yesno "Return to GUI?" 20 60 2 \
   else
     return $RET
   fi
-  ASK_TO_REBOOT=1
 }
 
 do_minidlna() {
-whiptail --fb --yesno "Minidlna?" 20 60 2 \
+whiptail --fb --yesno "MiniDLNA?" 20 60 2 \
     --yes-button Yes --no-button No
   RET=$?
   if [ $RET -eq 0 ]; then
-    echo "placeholder
-    whiptail --fb --msgbox "You should restart now." 20 60 1
+    install_minidlna
   elif [ $RET -eq 1 ]; then
     whiptail --fb --msgbox "Leaving" 20 60 1
   else
     return $RET
   fi
-  ASK_TO_REBOOT=1
+}
+
+install_minidlna() {
+apt-get install minidlna
+SRC=/etc/minidlna.conf
+
+#Shortcuts!
+DB=db_dir=/var/lib/minidlna NEW_DB=db_dir=/home/imx6/.minidlna
+MEDIA=media_dir=/var/lib/minidlna
+NEW_MEDIA=media_dir=A,/home/imx6/Music/
+
+#Make Folders if necessary.
+  DIR='/home/imx6'
+ if [ -d "$DIR/Music" ]; then
+  echo "Folder Exists move on!"
+ else
+  mkdir $DIR/Music
+ fi
+ if [ -d "$DIR/Photos" ]; then
+  echo "Folder Exists move on!"
+ else
+  mkdir $DIR/Photos
+ fi
+ if [ -d "$DIR/Videos" ]; then
+  echo "Folder Exists move on!"
+ else
+  mkdir $DIR/Videos
+ fi
+ if [ -d "$DIR/.minidlna" ]; then
+  echo "Folder Exists move on!"
+ else
+  mkdir $DIR/.minidlna
+ fi
+
+#I guess we should own these Folders!
+  chown -R imx6:imx6 /home/imx6
+#Make Temp File.
+cat <<EOF >add.txt
+media_dir=V,/home/imx6/Videos/
+media_dir=P,/home/imx6/Photos/
+EOF
+
+#Modify Conf.
+ sed -i "s#$MEDIA#$NEW_MEDIA#" $SRC
+ sed -i '/imx6/r add.txt' $SRC
+  sed -i 's/^#db_dir/db_dir/g' $SRC
+ sed -i 's/^#log_dir/log_dir/g' $SRC
+ sed -i "s#$DB#$NEW_DB#" $SRC
+
+#cleanup
+ rm add.txt
+ update-rc.d minidlna defaults
+ service minidlna start
+ minidlna -R
+ whiptail --fb --msgbox "MiniDLNA has been installed, Your Files should be placed in /home/imx6/Music,Photos,Videos!" 20 60 1
+}
+
+do_samba() {
+whiptail --fb --yesno "Samba?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    apt-get install -y samba samba-common-bin
+mv /etc/samba/smb.conf /etc/samba/smb.conf.$(date +%F)
+cat <<EOF >/etc/samba/smb.conf
+[homes]
+   comment = Home Directories
+   path = /home/imx6
+   browseable = yes
+   read only = no
+   create mask = 0777
+   directory mask = 0777
+   valid users = %S
+EOF
+whiptail --fb --msgbox "You will now be asked for a samba password TWICE!, Please remember this for later." 20 60 1
+smbpasswd -a imx6
+service samba restart
+whiptail --fb --msgbox "Samba is now fully installed and ready to go, File location is (/home/imx6). To make changes to the config use (sudo nano /etc/samba/smb.conf)." 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+}
+
+do_transmission() {
+whiptail --fb --yesno "Install Transmission?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+TRANS_SRC=/etc/transmission-daemon/settings.json
+CURRENT_PASS='rpc-password": "'
+ADD='"'
+CURRENT_USER='rpc-username": "'
+SAVE_DIR='download-dir": '
+NEW_SAVE='"/home/imx6/Torrent/completed",'
+PROGRESS_SAVE='incomplete-dir": '
+NEW_PROGRESS='"/home/imx6/Torrent/progress",'
+WHITELIST='rpc-whitelist-enabled": '
+SECURITY='rpc-authentication-required": '
+###################################################
+
+sudo apt-get -y install transmission-daemon
+mkdir /home/imx6/Torrent
+mkdir /home/imx6/Torrent/progress
+mkdir /home/imx6/Torrent/completed
+mkdir /home/imx6/Downloads
+sudo usermod -a -G debian-transmission imx6
+chgrp debian-transmission /home/imx6/Torrent/progress
+chgrp debian-transmission /home/imx6/Torrent/completed
+chgrp debian-transmission /home/imx6/Downloads
+chmod 770 /home/imx6/Torrent/progress
+chmod 770 /home/imx6/Torrent/completed
+chmod 770 /home/imx6/Downloads
+sudo service transmission-daemon stop
+sudo adduser imx6 debian-transmission
+sed -i 's/debian-transmission/imx6/' /etc/init.d/transmission-daemon
+chown imx6 -R /var/lib/transmission-daemon/info/
+chown imx6 -R /home/imx6/Torrent/completed
+chown imx6 -R /home/imx6/Torrent/progress
+chown imx6 -R /home/imx6/Downloads
+chown imx6 -R /etc/transmission-daemon/settings.json
+PASS=$(whiptail --inputbox "Please enter a password" 20 60 3>&1 1>&2 2>&3)
+  if [ $? -eq 0 ]; then
+    echo $PASS > tmp.txt
+sed -i "s/${CURRENT_PASS}.*/${CURRENT_PASS}${PASS}${ADD},/g" $TRANS_SRC
+rm tmp.txt
+sed -i "s/${CURRENT_USER}.*/${CURRENT_USER}imx6${ADD},/g" $TRANS_SRC
+sed -i "s#${SAVE_DIR}.*#${SAVE_DIR}${NEW_SAVE}#g" $TRANS_SRC
+sed -i "s#${PROGRESS_SAVE}.*#${PROGRESS_SAVE}${NEW_PROGRESS}#g" $TRANS_SRC
+sed -i "s/${WHITELIST}.*/${WHITELIST}false,/g" $TRANS_SRC
+sed -i "s/${SECURITY}.*/${SECURITY}true,/g" $TRANS_SRC
+service transmission-daemon start 
+whiptail --fb --msgbox "Transmission is now installed, Please enter (http://YOURIP:9091) into your browser to login with user imx6 and your password." 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+fi
 }
 
 do_toggle() {
@@ -291,7 +424,7 @@ PLEASE UNPLUG ALL OTHER FLASH DRIVES LEAVING THE ONE YOU WANT.
   RET=$?
   if [ $RET -eq 0 ]; then
     mount /dev/sda1 /mnt
-cat  <<EOF >/home/cubox/exclude.list
+cat  <<EOF >/home/imx6/exclude.list
 /dev/*
 /proc/*
 /sys/*
@@ -302,24 +435,8 @@ cat  <<EOF >/home/cubox/exclude.list
 /boot/*
 EOF
  echo "THIS MAY TAKE A FEW MINUTES, PLEASE WAIT..."
-    rsync -aH -p -P --exclude-from=/home/cubox/exclude.list  /  /mnt
-cat <<EOF >/mnt/etc/init.d/bootsplash
-#! /bin/sh
-### BEGIN INIT INFO
-# Provides:          bootsplash
-# Required-Start:    
-# Required-Stop:     glibc
-# Default-Start:     S
-# Default-Stop:
-# Short-Description: Show this to console during boot
-### END INIT INFO
-
-
-PATH=/sbin:/usr/sbin:/bin:/usr/bin
-
-echo "Booting Debian for Cubox (USB) ..." >> /dev/tty0
-fbi -vt 1 -noverbose -d /dev/fb0 /etc/bootsplash.png
-EOF
+    rsync -aH -p -P --exclude-from=/home/imx6/exclude.list  /  /mnt
+    sed -i 's/SD-CARD/USB/' /mnt/etc/init.d/bootsplash
     umount /mnt
     whiptail --fb --msgbox "All Done, If you want to boot from USB select USB_Boot" 20 60 1
   elif [ $RET -eq 1 ]; then
@@ -359,18 +476,18 @@ EOF
  ASK_TO_REBOOT=1
 }
 
-disable_cuboxi_config_at_boot() {
-  if [ -e /etc/profile.d/cuboxi-config.sh ]; then
-    rm -f /etc/profile.d/cuboxi-config.sh
+disable_imx6_config_at_boot() {
+  if [ -e /etc/profile.d/imx6-config.sh ]; then
+    rm -f /etc/profile.d/imx6-config.sh
     sed -i /etc/inittab \
-      -e "s/^#\(.*\)#\s*CUBOXICFG_TO_ENABLE\s*/\1/" \
-      -e "/#\s*CUBOXICFG_TO_DISABLE/d"
+      -e "s/^#\(.*\)#\s*IMX6CFG_TO_ENABLE\s*/\1/" \
+      -e "/#\s*IMX6CFG_TO_DISABLE/d"
     telinit q
   fi
 }
 
 do_finish() {
-  disable_cuboxi_config_at_boot
+  disable_imx6_config_at_boot
   if [ $ASK_TO_REBOOT -eq 1 ]; then
     whiptail --fb --yesno "Would you like to reboot now?" 20 60 2
     if [ $? -eq 0 ]; then # yes
@@ -379,6 +496,23 @@ do_finish() {
     fi
   fi
   exit 0
+}
+
+do_update() {
+whiptail --fb --yesno "You can't live without the best, Right?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+  git clone https://github.com/kicker22004/imx6-config.git /tmp/imx6-config/
+  cp /tmp/imx6-config/standalone/imx6-config_standalone /usr/bin/imx6-config
+  chmod +x /usr/bin/imx6-config
+  rm -rf /tmp/imx6-config
+    whiptail --fb --msgbox "Your Up To Date!" 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
 }
 
 # $1 = filename, $2 = key name
@@ -491,7 +625,7 @@ do
 done
 
 do_internationalisation_menu() {
-  FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Internationalisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+  FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Internationalisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "I1 Change Locale" "Set up language and regional settings to match your location" \
     "I2 Change Timezone" "Set up timezone to match your location" \
     "I3 Change Keyboard Layout" "Set the keyboard layout to match your keyboard" \
@@ -510,9 +644,9 @@ do_internationalisation_menu() {
 }
 
 do_advanced_menu() {
-  FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Advanced Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-    "A1 Hostname" "Set the visible name for this Cubox-i on a network" \
-    "A2 SSH" "Enable/Disable remote command line access to your Cubox-i using SSH" \
+  FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Advanced Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+    "A1 Hostname" "Set the visible name for this Imx6 on a network" \
+    "A2 SSH" "Enable/Disable remote command line access to your Imx6 using SSH" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -527,7 +661,7 @@ do_advanced_menu() {
 }
 
 do_boot_menu() {
-FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Boot Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Boot Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "B1 Copy SD2USB" "This will copy the Sd-Card to the USB for USB loading.(Must have empty USB with ext4)" \
     "B2 SD-Card" "This will set the SD-Card as boot device." \
     "B3 USB" "This will set the USB as boot device.(Can only work after Copy SD2USB)" \
@@ -563,13 +697,16 @@ do_owncloud_menu() {
 }
 
 do_one_click_menu() {
-FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "One Click Installer Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "One Click Installer Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "C1 Minecraft WebUi" "This will install the great MineOs WebUi for Minecraft!" \
     "C2 Owncloud" "This will Setup Owncloud fast and simple." \
     "C3 LXDE" "Sometimes we all need a GUI" \
     "C4 xfce" "xfce your thing? Click here!" \
     "C5 console" "Done with GUI? Return to console" \
     "C6 GUI-Return" "Return to GUI" \
+    "C7 MiniDLNA" "Installs Minidlna" \
+    "C8 Samba" "Installs Samba" \
+    "C9 Transmission" "Install Transmission-daemon" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -582,6 +719,9 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
       C4\ *) do_xfce ;;
       C5\ *) do_console ;;
       C6\ *) do_lightdm ;;
+      C7\ *) do_minidlna ;;
+      C8\ *) do_samba ;;
+      C9\ *) do_transmission ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
@@ -592,16 +732,17 @@ FUN=$(whiptail --fb --title "Cubox-i Software Configuration Tool (cuboxi-config)
 #
 calc_wt_size
 while true; do
-  FUN=$(whiptail --title "Cubox-i Software Configuration Tool (cuboxi-config)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
+  FUN=$(whiptail --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
     "1 Expand Filesystem" "Ensures that all of the SD card storage is available to the OS" \
     "2 Change Root Password" "Change password for the Root user (root)" \
-    "3 Change User Password" "Change password for the default user (cubox)" \
+    "3 Change User Password" "Change password for the default user (imx6)" \
     "4 Toggle Volume" "Pick Your Output" \
     "5 Internationalisation Options" "Set up language and regional settings to match your location" \
     "6 Boot Options" "SD/USB Boot" \
     "7 Advanced Options" "Configure advanced settings" \
     "8 One Click Installers" "One stop shop for all your install needs!" \
-    "9 About Cuboxi-config" "Information about this configuration tool" \
+    "9 About imx6-config" "Information about this configuration tool" \
+    "10 Update" "Update imx6-config" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -617,6 +758,7 @@ while true; do
       7\ *) do_advanced_menu ;;
       8\ *) do_one_click_menu ;;
       9\ *) do_about ;;
+     10\ *) do_update ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   else
