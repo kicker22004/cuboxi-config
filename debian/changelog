@@ -1,4 +1,7 @@
-imx6-config (0.2) unstable; urgency=low
+imx6-config (0.3) unstable; urgency=low
+
+  * imx6-config (0.3) unstalble; urgency=low
+    -Removed Toggle options, Not needed as Pulseaudio with Pavucontrol can now see outputs.
 
   * imx6-config (0.2) unstable; urgency=low
     -Removing features from old script.
