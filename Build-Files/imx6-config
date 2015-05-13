@@ -552,6 +552,7 @@ while true; do
     "5 Boot Options" "[SD/USB Boot]" \
     "6 Advanced Options" "[Hostname/SSH setup]" \
     "7 GUI Options" "[Setup your imx6 for a desktop or console on boot.]" \
+    "8 About imx6-config" "[Information about this configuration tool]" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -565,6 +566,7 @@ while true; do
       5\ *) do_boot_menu ;;
       6\ *) do_advanced_menu ;;
       7\ *) do_gui_menu ;;
+      8\ *) do_about ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   else
