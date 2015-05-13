@@ -112,7 +112,7 @@ whiptail --fb --yesno "Swap Installer?" 20 60 2 \
     do_swap_install_check
   elif [ $RET -eq 1 ]; then
     whiptail --fb --msgbox "Leaving" 20 60 1
-    do_one_click_menu
+    do_swap_menu
   else
     return $RET
   fi
@@ -122,13 +122,13 @@ do_swap_install_check() {
      whiptail --fb --msgbox "On the first run it will take some time, It's creating a default 2GB swap." 20 60 1
    if type dphys-swapfile >/dev/null 2>&1 ; then
      whiptail --fb --msgbox " You already have Swap installed, Use other options for size changes." 20 60 1
-     do_one_click_menu
+     do_swap_menu
    else
      clear
      apt-get install dphys-swapfile
      sudo sed -i 's/#CONF_SWAPSIZE/CONF_SWAPSIZE/' /etc/dphys-swapfile
      whiptail --fb --msgbox " All done, Check swap size option to adjust it." 20 60 1
-     do_one_click_menu
+     do_swap_menu
    fi
 }
 
@@ -143,7 +143,7 @@ do_swap_limit_custom() {
     dphys-swapfile setup
     whiptail --msgbox "Upload Limit Set to $NEW_LIMIT" 20 60 1
     rm /tmp/swap_size
-    do_one_click_menu
+    do_swap_menu
   fi
 }
 
@@ -165,10 +165,10 @@ if [ $exitstatus = 0 ]; then
     echo $PRESET > /tmp/swap_size
     sed -i "s/CONF_SWAPSIZE=$CURRENT_LIMIT/CONF_SWAPSIZE=$PRESET/g" /etc/dphys-swapfile
     whiptail --msgbox "Swap has been changed to $PRESET" 20 60 1
-    do_one_click_menu
+    do_swap_menu
 else
     whiptail --msgbox  "Leaving." 20 60 1
-    do_one_click_menu
+    do_swap_menu
   fi
 }
 
@@ -499,8 +499,8 @@ FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --m
   fi
 }
 
-o_swap_menu() {
-  FUN=$(whiptail --title "Swap Menu" --menu "Install or Upload limit?" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+do_swap_menu() {
+  FUN=$(whiptail --title "Swap Menu" --menu "Install or Swap limit?" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "O1 Install Swap" "[Start Here]" \
     "O2 Swap Presets" "[Preset Swap Limits]" \
     "O3 Swap Custom" "[Set custom swap Limits]" \
