@@ -1,5 +1,11 @@
-imx6-config (0.1) unstable; urgency=low
+imx6-config (0.2) unstable; urgency=low
 
+  * imx6-config (0.2) unstable; urgency=low
+    -Removing features from old script.
+    -renames from cubox to imx6
+    
+ -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 19:30:13
+  
   * Initial release
 
  -- Unknown <unknown>  Sun, 08 Feb 2015 19:52:29 +0000
