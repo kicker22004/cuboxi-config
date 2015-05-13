@@ -174,45 +174,6 @@ whiptail --fb --yesno "Return to GUI?" 20 60 2 \
   fi
 }
 
-do_toggle() {
-  whiptail --fb --yesno "Toggle Outputs" 20 60 2 \
-    --yes-button HDMI --no-button SPDIF
-  RET=$?
-  if [ $RET -eq 0 ]; then
-    cat <<EOF >/etc/asound.conf
-pcm.!default {
-  type plug
-  slave {
-    pcm "hw:1,0"
-  }
-}
-
-ctl.!default {
-  type hw
-  card 1
-}
-EOF
-    whiptail --fb --msgbox "HDMI Selected" 20 60 1
-elif [ $RET -eq 1 ]; then
-         cat <<EOF >/etc/asound.conf
-pcm.!default {
-  type plug
-  slave {
-    pcm "hw:0,0"
-  }
-}
-
-ctl.!default {
-  type hw
-  card 0
-}
-EOF
-    whiptail --fb --msgbox "SPDIF Selected" 20 60 1
-  else
-    return $RET
-  fi
-}
-
 do_SD2USB() {
   whiptail --msgbox "\
 WARNING!! THIS WILL ERASE ANYTHING THAT IS ON SDA1!
@@ -409,9 +370,9 @@ done
 
 do_internationalisation_menu() {
   FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Internationalisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-    "I1 Change Locale" "Set up language and regional settings to match your location" \
-    "I2 Change Timezone" "Set up timezone to match your location" \
-    "I3 Change Keyboard Layout" "Set the keyboard layout to match your keyboard" \
+    "I1 Change Locale" "[Set up language and regional settings to match your location]" \
+    "I2 Change Timezone" "[Set up timezone to match your location]" \
+    "I3 Change Keyboard Layout" "[Set the keyboard layout to match your keyboard]" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -428,8 +389,8 @@ do_internationalisation_menu() {
 
 do_advanced_menu() {
   FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Advanced Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-    "A1 Hostname" "Set the visible name for this Imx6 on a network" \
-    "A2 SSH" "Enable/Disable remote command line access to your Imx6 using SSH" \
+    "A1 Hostname" "[Set the visible name for this Imx6 on a network]" \
+    "A2 SSH" "[Enable/Disable remote command line access to your Imx6 using SSH]" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -445,9 +406,9 @@ do_advanced_menu() {
 
 do_boot_menu() {
 FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Boot Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-    "B1 Copy SD2USB" "This will copy the Sd-Card to the USB for USB loading.(Must have empty USB with ext4)" \
-    "B2 SD-Card" "This will set the SD-Card as boot device." \
-    "B3 USB" "This will set the USB as boot device.(Can only work after Copy SD2USB)" \
+    "B1 Copy SD2USB" "[This will copy the Sd-Card to the USB for USB loading.(Must have empty USB with ext4)]" \
+    "B2 SD-Card" "[This will set the SD-Card as boot device.]" \
+    "B3 USB" "[This will set the USB as boot device.(Can only work after Copy SD2USB)]" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -463,12 +424,12 @@ FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --m
 }
 
 
-do_one_click_menu() {
-FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "One Click Installer Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-    "C1 LXDE" "Sometimes we all need a GUI" \
-    "C2 XFCE" "xfce your thing? Click here!" \
-    "C3 console" "Done with GUI? Return to console" \
-    "C4 GUI-Return" "Return to GUI" \
+do_gui_menu() {
+FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "GUI Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+    "C1 LXDE" "[Sometimes we all need a GUI]" \
+    "C2 XFCE" "[XFCE your thing? Click here!]" \
+    "C3 console" "[Done with GUI? Return to console]" \
+    "C4 GUI-Return" "[Return to GUI]" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -490,14 +451,13 @@ FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --m
 calc_wt_size
 while true; do
   FUN=$(whiptail --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
-    "1 Change Root Password" "Change password for the Root user (root)" \
-    "2 Change User Password" "Change password for the default user (imx6)" \
-    "3 Toggle Volume" "Pick Your Output" \
-    "4 Internationalisation Options" "Set up language and regional settings to match your location" \
-    "5 Boot Options" "SD/USB Boot" \
-    "6 Advanced Options" "Configure advanced settings" \
-    "7 One Click Installers" "One stop shop for all your install needs!" \
-    "8 About imx6-config" "Information about this configuration tool" \
+    "1 Change Root Password" "[Change password for the Root user (root)]" \
+    "2 Change User Password" "[Change password for the default user (imx6)]" \
+    "3 Internationalisation Options" "[Set up language and regional settings to match your location]" \
+    "4 Boot Options" "[SD/USB Boot]" \
+    "5 Advanced Options" "[Configure advanced settings]" \
+    "6 GUI Menu" "[Everything GUI/Console]" \
+    "7 About imx6-config" "[Information about this configuration tool]" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -506,12 +466,11 @@ while true; do
     case "$FUN" in
       1\ *) do_change_Root ;;
       2\ *) do_change_pass ;;
-      3\ *) do_toggle ;;
-      4\ *) do_internationalisation_menu ;;
-      5\ *) do_boot_menu ;;
-      6\ *) do_advanced_menu ;;
-      7\ *) do_one_click_menu ;;
-      8\ *) do_about ;;
+      3\ *) do_internationalisation_menu ;;
+      4\ *) do_boot_menu ;;
+      5\ *) do_advanced_menu ;;
+      6\ *) do_gui_menu ;;
+      7\ *) do_about ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   else
