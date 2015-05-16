@@ -3,18 +3,18 @@ imx6-config (0.4) unstable; urgency=low
   * imx6-config (0.4) unstalble; urgency=low
     -Added Swap Options
     
- -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 20:25:30
+ -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 20:25:30 +0000
 
   * imx6-config (0.3) unstalble; urgency=low
     -Removed Toggle options, Not needed as Pulseaudio with Pavucontrol can now see outputs.
     
- -- -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 19:43:37
+ -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 19:43:37 +0000
 
   * imx6-config (0.2) unstable; urgency=low
     -Removing features from old script.
     -renames from cubox to imx6
     
- -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 19:30:13
+ -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 19:30:13 +0000
   
   * Initial release
 
