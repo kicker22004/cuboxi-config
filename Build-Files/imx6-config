@@ -250,6 +250,94 @@ whiptail --fb --yesno "Return to GUI?" 20 60 2 \
   fi
 }
 
+do_drive() {
+# collect list of drives 
+drives= 
+i=0 
+for file in /dev/disk/by-id/*; do 
+        # extract canonical disk name 
+        disk=`readlink -f $file` 
+
+        # extract disk id 
+        id=`basename $file` 
+
+        # filter out any partitions 
+        # Logic is: remove the numeric end (if any) and check if a disk with that name exists 
+        basedisk=`echo $disk | sed -e "s;[0-9]\+$;;g"` 
+        if [ $disk != $basedisk ] && [ -e $basedisk ]; then 
+                # so the current disk is a partition of this 
+                continue 
+        fi 
+        # for MMC parts additional magic is required, since a p is added in between 
+        basedisk=`echo $disk | sed -e "s;p[0-9]\+$;;g"` 
+        if [ $disk != $basedisk ] && [ -e $basedisk ]; then 
+                # so the current disk is a partition of this 
+                continue 
+        fi 
+
+        # I still want to know the disk size 
+        # luckily, its available under /sys/class/block/DEV/size 
+        name=`basename $disk` 
+        size=`cat /sys/class/block/$name/size` 
+        if [ $? != 0 ]; then 
+                size="??" 
+        fi 
+        # convert to GB 
+        ((size=size/2/1024/1024)) 
+
+        # save in array as pair 
+        drives[$i]="${disk} ${id}--${size}GB(+/-5%)" 
+        ((i=i+1)) 
+done 
+# present list to user 
+selected_drive=$(whiptail --menu "Select target disk, Or Cancel to Leave" 20 70 ${#drives[@]} ${drives[@]} 3>&1 1>&2 2>&3) 
+if [ $? -eq 0 ]; then
+  whiptail --fb --yesno "YOU SELECTED $selected_drive. IS THIS CORRECT?  THIS WILL ERASE YOUR DRIVE SO BE SURE!" 20 60 1 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    do_last_chance
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  do_drive
+  else
+    return $RET
+  fi
+else
+  if [ $? -eq 1 ]; then
+  return $?
+fi
+fi
+}
+
+do_last_chance() {
+whiptail --fb --yesno "THIS IS YOUR LAST CHANCE TO SAVE YOUR DATA! AFTER THIS IT IS TOO LATE TO STOP THE PROCESS. YOU HAVE BEEN WARNED! ONCE AGAIN YOU SELECTED $selected_drive" 20 60 1 \
+    --yes-button WIPE --no-button NO
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    for v_partition in $(parted -s $selected_drive print|awk '/^ / {print $1}')
+do
+   parted -s $selected_drive rm ${v_partition}
+done
+
+# Find size of disk
+umount $selected_drive*
+v_disk=$(parted -s $selected_drive print|awk '/^Disk/ {print $3}'|sed 's/[Mm][Bb]//')
+
+# Create single partition
+parted -s $selected_drive mkpart primary 0 ${v_disk}
+
+# Format the partition
+mke2fs -T ext4 "${selected_drive}1"
+umount $selected_drive*
+    do_SD2USB
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+}
+
 do_SD2USB() {
   whiptail --msgbox "\
 WARNING!! THIS WILL ERASE ANYTHING THAT IS ON SDA1!
