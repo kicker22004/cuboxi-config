@@ -1,3 +1,4 @@
 #! /usr/bin/dh-exec
 Build-Files/imx6-config /usr/bin/
 Build-Files/imx6-config.sh /etc/profile.d/
+Build-Files/bootsplash.png /etc/
