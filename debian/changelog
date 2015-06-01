@@ -1,4 +1,10 @@
-imx6-config (0.4) unstable; urgency=low
+imx6-config (0.5) unstable; urgency=medium
+
+  * imx6-config (0.5) unstalble; urgency=medium
+    -Easy Copy from Sdcard to Usb/External drive.
+    -Changed to new default bootsplash.
+    
+ -- Kicker22004 <privacy@not.given> Sun, 31 May 2015 21:03:36 -0700
 
   * imx6-config (0.4) unstalble; urgency=low
     -Added Swap Options
