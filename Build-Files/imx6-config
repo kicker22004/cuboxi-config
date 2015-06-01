@@ -1,10 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 # Part of imx6-config http://github.com/kicker22004/imx6-config
 #
 # See LICENSE file for copyright and license details
 
 INTERACTIVE=True
 ASK_TO_REBOOT=0
+DRIVE=/tmp/drivelist
 
 calc_wt_size() {
   # NOTE: it's tempting to redirect stderr to /dev/null, so supress error 
@@ -28,7 +29,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 II                                                              II
 II                                                              II
 II                 Information about imx6-config                II
-II                  Version 0.4 from 05-12-2015                 II
+II                  Version 0.5 from 05-31-2015                 II
 II                  Supported devices: SolidRuns                II
 II                                                              II
 II                        * Hummingboard                        II
@@ -125,8 +126,11 @@ do_swap_install_check() {
      do_swap_menu
    else
      clear
-     apt-get install dphys-swapfile
-     sudo sed -i 's/#CONF_SWAPSIZE/CONF_SWAPSIZE/' /etc/dphys-swapfile
+     if [ ! -f /etc/dphys-swapfile ]; then
+    echo CONF_SWAPSIZE= > /etc/dphys-swapfile
+   else
+	sudo sed -i 's/#CONF_SWAPSIZE/CONF_SWAPSIZE/' /etc/dphys-swapfile
+     fi  
      whiptail --fb --msgbox " All done, Check swap size option to adjust it." 20 60 1
      do_swap_menu
    fi
@@ -135,7 +139,7 @@ do_swap_install_check() {
 do_swap_limit_custom() {
   sed -n -e '/CONF_SWAPSIZE/ s/.*\= *//p' /etc/dphys-swapfile > /tmp/swap_size
   CURRENT_LIMIT=`cat /tmp/swap_size | tr -d " \t\n\r"`
-  NEW_LIMIT=$(whiptail --inputbox "Please enter a Swap limit." 20 60 "$CURRENT_LIMIT" 3>&1 1>&2 2>&3)
+  NEW_LIMIT=$(whiptail --inputbox "Please enter a Swap limit.(example 512)" 20 60 "$CURRENT_LIMIT" 3>&1 1>&2 2>&3)
   if [ $? -eq 0 ]; then
     echo $NEW_LIMIT > /tmp/swap_size
     sed -i "s/CONF_SWAPSIZE=$CURRENT_LIMIT/CONF_SWAPSIZE=$NEW_LIMIT/g" /etc/dphys-swapfile 
@@ -250,8 +254,8 @@ whiptail --fb --yesno "Return to GUI?" 20 60 2 \
   fi
 }
 
-do_drive() {
-# collect list of drives 
+do_SD2X() {
+   # collect list of drives 
 drives= 
 i=0 
 for file in /dev/disk/by-id/*; do 
@@ -290,18 +294,20 @@ for file in /dev/disk/by-id/*; do
         ((i=i+1)) 
 done 
 # present list to user 
-selected_drive=$(whiptail --menu "Select target disk, Or Cancel to Leave" 20 70 ${#drives[@]} ${drives[@]} 3>&1 1>&2 2>&3) 
-if [ $? -eq 0 ]; then
-  whiptail --fb --yesno "YOU SELECTED $selected_drive. IS THIS CORRECT?  THIS WILL ERASE YOUR DRIVE SO BE SURE!" 20 60 1 \
-    --yes-button Yes --no-button No
-  RET=$?
-  if [ $RET -eq 0 ]; then
-    do_last_chance
-  elif [ $RET -eq 1 ]; then
-    whiptail --fb --msgbox "Leaving" 20 60 1
-  do_drive
-  else
-    return $RET
+selected_drive=$(whiptail --menu "Select target disk, Or Cancel to Leave" 20 80 ${#drives[@]} ${drives[@]} 3>&1 1>&2 2>&3) 
+  if [ $? -eq 0 ]; then
+  if [[ $selected_drive = "/dev/mmcblk0" ]]
+  then
+  whiptail --msgbox --fb " YOUR A MAD MAN!, THIS IS YOUR SDCARD YOUR TRING TO ERASE!....EXITING" 20 60 1
+     return $RET
+fi
+   RET=$?
+   if [ $RET -eq 0 ]; then
+     do_last_chance
+   elif [ $RET -eq 1 ]; then
+     whiptail --fb --msgbox "Leaving" 20 60 1
+   else
+    calc_wt_size
   fi
 else
   if [ $? -eq 1 ]; then
@@ -317,88 +323,129 @@ whiptail --fb --yesno "THIS IS YOUR LAST CHANCE TO SAVE YOUR DATA! AFTER THIS IT
   if [ $RET -eq 0 ]; then
     for v_partition in $(parted -s $selected_drive print|awk '/^ / {print $1}')
 do
-   parted -s $selected_drive rm ${v_partition}
+    parted -s $selected_drive rm ${v_partition}
 done
 
 # Find size of disk
-umount $selected_drive*
-v_disk=$(parted -s $selected_drive print|awk '/^Disk/ {print $3}'|sed 's/[Mm][Bb]//')
+    umount $selected_drive*
+    v_disk=$(parted -s $selected_drive print|awk '/^Disk/ {print $3}'|sed 's/[Mm][Bb]//')
 
 # Create single partition
-parted -s $selected_drive mkpart primary 0 ${v_disk}
+    parted -s $selected_drive mkpart primary 0 ${v_disk}
 
 # Format the partition
-mke2fs -T ext4 "${selected_drive}1"
-umount $selected_drive*
-    do_SD2USB
+    mke2fs -T ext4 "${selected_drive}1"
+    umount $selected_drive*
   elif [ $RET -eq 1 ]; then
     whiptail --fb --msgbox "Leaving" 20 60 1
+    return $RET
   else
     return $RET
   fi
-}
-
-do_SD2USB() {
-  whiptail --msgbox "\
-WARNING!! THIS WILL ERASE ANYTHING THAT IS ON SDA1!
-PLEASE UNPLUG ALL OTHER FLASH DRIVES LEAVING THE ONE YOU WANT.
-               YOU HAVE BEEN WARNED! \
-" 20 70 1
-   whiptail --fb --yesno "Last Chance To Back Out!" 20 60 2 \
-    --yes-button Continue --no-button BackOUT!
-  RET=$?
-  if [ $RET -eq 0 ]; then
-    mount /dev/sda1 /mnt
-cat  <<EOF >/home/imx6/exclude.list
-/dev/*
-/proc/*
-/sys/*
-/media/*
-/mnt/*
-/run/*
-/tmp/*
-/boot/*
-EOF
- echo "THIS MAY TAKE A FEW MINUTES, PLEASE WAIT..."
-    rsync -aH -p -P --exclude-from=/home/imx6/exclude.list  /  /mnt
-    sed -i 's/SD-CARD/USB/' /mnt/etc/init.d/bootsplash
-    umount /mnt
-    whiptail --fb --msgbox "All Done, If you want to boot from USB select USB_Boot" 20 60 1
+   
+   whiptail --fb --yesno "About to start coping files, Please be patiant." 15 78 \
+     --yes-button Continue --no-button No 
+   RET=$? 
+   if [ $RET -eq 0 ]; then 
+    # mount target filesystem 
+     mount "${selected_drive}1" /mnt 
+    # build exclude list 
+    EXCL_ARGS= 
+    i=0 
+    for pattern in `mount | cut -d' ' -f3 | grep -v "^/$"`; do 
+        EXCL_ARGS[$i]="--exclude=$pattern/*" 
+        ((i=i+1)) 
+    done 
+    
+    EXCL_ARGS[$i]="--exclude=/boot/*" 
+  rsync -aH -p --progress -P ${EXCL_ARGS[@]} / /mnt
+  sync
+  umount /mnt
+  whiptail --fb --msgbox "Transfer Complete! Please use the Boot Select option to select the drive you want to load." 20 60 1 
   elif [ $RET -eq 1 ]; then
     return
     whiptail --fb --msgbox "Returning to Safty" 20 60 1
   else
   return
   fi
-  ASK_TO_REBOOT=1
 }
 
-do_SD_Boot() {
- whiptail --fb --msgbox "Setting Boot to SD-Card" 20 60 1
+do_boot_option() {
+   # collect list of drives 
+drives= 
+i=0 
+for file in /dev/disk/by-id/*; do 
+        # extract canonical disk name 
+        disk=`readlink -f $file` 
+
+        # extract disk id 
+        id=`basename $file` 
+
+        # filter out any partitions 
+        # Logic is: remove the numeric end (if any) and check if a disk with that name exists 
+        basedisk=`echo $disk | sed -e "s;[0-9]\+$;;g"` 
+        if [ $disk != $basedisk ] && [ -e $basedisk ]; then 
+                # so the current disk is a partition of this 
+                continue 
+        fi 
+        # for MMC parts additional magic is required, since a p is added in between 
+        basedisk=`echo $disk | sed -e "s;p[0-9]\+$;;g"` 
+        if [ $disk != $basedisk ] && [ -e $basedisk ]; then 
+                # so the current disk is a partition of this 
+                continue 
+        fi 
+
+        # I still want to know the disk size 
+        # luckily, its available under /sys/class/block/DEV/size 
+        name=`basename $disk` 
+        size=`cat /sys/class/block/$name/size` 
+        if [ $? != 0 ]; then 
+                size="??" 
+        fi 
+        # convert to GB 
+        ((size=size/2/1024/1024)) 
+
+        # save in array as pair 
+        drives[$i]="${disk} ${id}--${size}GB(+/-5%)" 
+        ((i=i+1)) 
+done 
+# present list to user 
+selected_boot=$(whiptail --menu "Select target disk to set boot, Or Cancel to Leave" 20 80 ${#drives[@]} ${drives[@]} 3>&1 1>&2 2>&3)
+ if [ $? != 0 ]; then 
+        # something bad happened. The user canceled, the program crashed, I haven't got a clue. 
+        return $RET
+fi 
+
+#Trap to check if your trying to boot to sdcard. 
+if [ $? -eq 0 ]; then
+  if [[ $selected_boot = "/dev/mmcblk0" ]]
+  then
+ clear
  mount /dev/mmcblk0p1 /mnt
- sed -i 's*/dev/sda1*/dev/mmcblk0p1*g' /mnt/etc/fstab
- sed -i 's/sda1/mmcblk0p1/g' /mnt/boot/uEnv.txt
- cat <<EOF >/etc/fstab
-# UNCONFIGURED FSTAB FOR BASE SYSTEM
-/dev/sda1  /           ext4    defaults,noatime,nodiratime,data=writeback,commit=600,errors=remount-ro        0       0
+ cat <<EOF >/mnt/boot/uEnv.txt
+mmcargs=setenv bootargs root=/dev/mmcblk0p1 rootfstype=ext4 rootwait console=ttymxc0,115200n8 video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24,bpp=32 rd.dm=0 rd.luks=0 rd.lvm=0 raid=noautodetect quiet
 EOF
  umount /mnt
- whiptail --fb --msgbox "After Reboot you will be loading off the SD-CARD." 20 60 1
+ whiptail --fb --msgbox "After Reboot you will be loading off the Sdcard." 20 60 1
  ASK_TO_REBOOT=1
-}	
+return $RET
+fi
 
-do_USB_Boot() {
- whiptail --fb --msgbox "Setting Boot to USB" 20 60 1
-  mount /dev/sda1 /mnt
- sed -i 's*/dev/mmcblk0p1*/dev/sda1*g' /mnt/etc/fstab
- sed -i 's/mmcblk0p1/sda1/g' /boot/uEnv.txt
+# Anything Not mmcblk0
+ clear
+ mount ${selected_boot}1 /mnt
+ cat <<EOF >/boot/uEnv.txt
+mmcargs=setenv bootargs root=${selected_boot}1 rootfstype=ext4 rootwait console=ttymxc0,115200n8 video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24,bpp=32 rd.dm=0 rd.luks=0 rd.lvm=0 raid=noautodetect quiet
+EOF
  cat <<EOF >/mnt/etc/fstab
 # UNCONFIGURED FSTAB FOR BASE SYSTEM
-/dev/sda1  /           ext4    defaults,noatime        0       0
+${selected_boot}1  /           ext4    defaults,noatime        0       0
 EOF
+ sync
  umount /mnt
- whiptail --fb --msgbox "After Reboot you will be loading off the USB." 20 60 1
+ whiptail --fb --msgbox "After Reboot you will be loading off the $selected_boot." 20 60 1
  ASK_TO_REBOOT=1
+fi
 }
 
 disable_imx6_config_at_boot() {
@@ -532,6 +579,10 @@ do
   esac
 done
 
+do_upgrade() {
+   whiptail --msgbox --fb "Currently not implemented" 20 60 1
+}
+
 do_internationalisation_menu() {
   FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Internationalisation Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "I1 Change Locale" "[Set up language and regional settings to match your location]" \
@@ -570,18 +621,16 @@ do_advanced_menu() {
 
 do_boot_menu() {
 FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Boot Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-    "B1 Copy SD2USB" "[This will copy the Sd-Card to the USB for USB loading.(Must have empty USB with ext4)]" \
-    "B2 SD-Card" "[This will set the SD-Card as boot device.]" \
-    "B3 USB" "[This will set the USB as boot device.(Can only work after Copy SD2USB)]" \
+    "B1 Copy SD>X" "[This will copy the Sd-Card to External Devices]" \
+    "B2 Boot Select" "[Change Your Boot On The Fly. (make sure the target has a distro!]" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
     return 0
   elif [ $RET -eq 0 ]; then
     case "$FUN" in
-      B1\ *) do_SD2USB ;;
-      B2\ *) do_SD_Boot ;;
-      B3\ *) do_USB_Boot ;;
+      B1\ *) do_SD2X ;;
+      B2\ *) do_boot_option ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
@@ -637,10 +686,11 @@ while true; do
     "2 Change User Password" "[Change password for the default user (imx6)]" \
     "3 Internationalisation Options" "[Set up language and regional settings to match your location]" \
     "4 Swap" "[This will guide you through setting up swap.]" \
-    "5 Boot Options" "[SD/USB Boot]" \
+    "5 Boot Options" "[SD to External Boot]" \
     "6 Advanced Options" "[Hostname/SSH setup]" \
     "7 GUI Options" "[Setup your imx6 for a desktop or console on boot.]" \
-    "8 About imx6-config" "[Information about this configuration tool]" \
+    "8 Distribution Upgrade" "[Placeholder]" \
+    "9 About imx6-config" "[Information about this configuration tool]" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -654,10 +704,13 @@ while true; do
       5\ *) do_boot_menu ;;
       6\ *) do_advanced_menu ;;
       7\ *) do_gui_menu ;;
-      8\ *) do_about ;;
+      8\ *) do_upgrade ;;
+      9\ *) do_about ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
   else
     exit 1
   fi
 done
+
+
