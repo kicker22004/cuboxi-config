@@ -6,6 +6,11 @@
 INTERACTIVE=True
 ASK_TO_REBOOT=0
 DRIVE=/tmp/drivelist
+VERSION=`lsb_release -a`
+CODENAME=`lsb_release -c -s`
+
+whiptail --fb --msgbox "$VERSION" --title "This is your system information." 20 60 1
+
 
 calc_wt_size() {
   # NOTE: it's tempting to redirect stderr to /dev/null, so supress error 
@@ -103,6 +108,18 @@ do_ssh() {
   else
     return $RET
   fi
+}
+
+do_uboot() {
+  if [ ! -f /boot/uEnv.txt ]; then
+    whiptail --fb --msgbox  "No Boot File, Your probably running on an external device, Mounting..." 20 60 1
+    whiptail --fb --msgbox "Warning!! If you don't know what your doing then leave the next menu by pressing CTRL+X" 20 60 1
+    mount /dev/mmcblk0p1 /mnt
+    nano /mnt/boot/uEnv.txt 
+else
+    whiptail --fb --msgbox "Warning!! If you don't know what your doing then leave the next menu by pressing CTRL+X" 20 60 1
+    nano /boot/uEnv.txt
+fi 
 }
 
 do_swap_install() {
@@ -606,6 +623,7 @@ do_advanced_menu() {
   FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Advanced Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "A1 Hostname" "[Set the visible name for this Imx6 on a network]" \
     "A2 SSH" "[Enable/Disable remote command line access to your Imx6 using SSH]" \
+    "A3 Uboot" "[Make uEnv.txt edits]" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -614,6 +632,7 @@ do_advanced_menu() {
     case "$FUN" in
       A1\ *) do_change_hostname ;;
       A2\ *) do_ssh ;;
+      A3\ *) do_uboot ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
