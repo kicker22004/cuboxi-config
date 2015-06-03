@@ -1,27 +1,31 @@
 imx6-config (0.5) unstable; urgency=medium
 
-  * imx6-config (0.5) unstalble; urgency=medium
-    -Easy Copy from Sdcard to Usb/External drive.
-    -Changed to new default bootsplash.
-    
- -- Kicker22004 <privacy@not.given> Sun, 31 May 2015 21:03:36 -0700
+  * Easy Copy from Sdcard to Usb/External drive.
+  * Changed to new default bootsplash.
 
-  * imx6-config (0.4) unstalble; urgency=low
-    -Added Swap Options
-    
+ -- Kicker22004 <privacy@not.given>  Sun, 31 May 2015 21:03:36 -0700
+
+imx6-config (0.4) unstable; urgency=low
+
+  * Added Swap Options
+
  -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 20:25:30 +0000
 
-  * imx6-config (0.3) unstalble; urgency=low
-    -Removed Toggle options, Not needed as Pulseaudio with Pavucontrol can now see outputs.
-    
+imx6-config (0.3) unstable; urgency=low
+
+  * Removed Toggle options, Not needed as Pulseaudio with Pavucontrol can now see outputs.
+
  -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 19:43:37 +0000
 
-  * imx6-config (0.2) unstable; urgency=low
-    -Removing features from old script.
-    -renames from cubox to imx6
-    
- -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 19:30:13 +0000
-  
-  * Initial release
+imx6-config (0.2) unstable; urgency=low
 
- -- Unknown <unknown>  Sun, 08 Feb 2015 19:52:29 +0000
+  * Removing features from old script.
+  * renames from cubox to imx6
+
+ -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 19:30:13 +0000
+
+imx6-config (0.1) unstable; urgency=low
+
+   * Initial release
+
+  -- Unknown <unknown>  Sun, 08 Feb 2015 19:52:29 +0000
