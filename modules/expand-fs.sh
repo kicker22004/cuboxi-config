@@ -32,7 +32,7 @@ fdisk_skip_text() {
 # expand partition
 if [ -z "$stage" ] || [ "$stage" = "1" ]; then
 	# get data on partition
-	data=`fdisk --list $device | fdisk_skip_text | sed -e "s;*;;g" -e "s; \+; ;g" | grep "$partition"`
+	data=`fdisk -l $device | fdisk_skip_text | sed -e "s;*;;g" -e "s; \+; ;g" | grep "$partition"`
 	start=`echo $data | cut -d' ' -f2`
 
 	# extract partition number
@@ -44,7 +44,7 @@ if [ -z "$stage" ] || [ "$stage" = "1" ]; then
 	# reload partition table
 	s=0
 	partprobe $device || s=$?
-	if [ $? != 0 ]; then
+	if [ $s != 0 ]; then
 		echo "Failed to reload partition table, filesystem has not been expanded. Please reboot as soon as possible!"
 		exit 2
 	fi
