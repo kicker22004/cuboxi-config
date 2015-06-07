@@ -40,14 +40,14 @@ if [ -z "$stage" ] || [ "$stage" = "1" ]; then
 
 	# recreate partition
 	printf "d\n%i\nn\np\n%i\n%i\n\nw\nq\n" $partnum $partnum $start | sudo fdisk $device || true
+fi
 
-	# reload partition table
-	s=0
-	partprobe $device || s=$?
-	if [ $s != 0 ]; then
-		echo "Failed to reload partition table, filesystem has not been expanded. Please reboot as soon as possible!"
-		exit 2
-	fi
+# reload partition table
+s=0
+partprobe $device || s=$?
+if [ $s != 0 ]; then
+	echo "Failed to reload partition table, filesystem has not been expanded. Please reboot as soon as possible!"
+	exit 2
 fi
 
 if [ -z "$stage" ] || [ "$stage" = "2" ]; then
