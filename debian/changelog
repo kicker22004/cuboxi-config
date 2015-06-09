@@ -1,3 +1,10 @@
+imx6-config (0.6) unstable; urgency=medium
+
+  * Removed LXDE until more testing.
+  * Added whoami to check for active user.
+
+ -- Kicker22004 <privacy@not.givin>  Tue, 09 Jun 2015 09:29:10 -0700
+ 
 imx6-config (0.5) unstable; urgency=medium
 
   * Easy Copy from Sdcard to Usb/External drive.
