@@ -8,6 +8,8 @@ ASK_TO_REBOOT=0
 DRIVE=/tmp/drivelist
 VERSION=`lsb_release -a`
 CODENAME=`lsb_release -c -s`
+USER=`whoami`
+clear
 
 whiptail --fb --msgbox "$VERSION" --title "This is your system information." 20 60 1
 
@@ -46,8 +48,8 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII \
 }
 
 do_change_pass() {
-  whiptail --fb --msgbox "You will now be asked to enter a new password for the imx6 user" 20 60 1
-  passwd imx6 &&
+  whiptail --fb --msgbox "You will now be asked to enter a new password for the $USER user" 20 60 1
+  passwd $USER &&
   whiptail --fb --msgbox "Password changed successfully" 20 60 1
 }
 
@@ -212,8 +214,8 @@ install_lxde() {
   else
   apt-get update
   apt-get install -y xorg lxde lightdm iceweasel
-  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=imx6/"
-  sed -i 's/^Session=.*$/Session=LXDE/' /home/imx6/.dmrc
+  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=$USER/"
+  sed -i 's/^Session=.*$/Session=LXDE/' /home/$USER/.dmrc
   whiptail --fb --msgbox "You should restart now." 20 60 1
 fi
 }
@@ -233,12 +235,12 @@ whiptail --fb --yesno "xfce Installer" 20 60 2 \
 
 install_xfce() {
   if dpkg -s xfce4; then
-  sed -i 's/^Session=.*$/Session=xfce/' /home/imx6/.dmrc
+  sed -i 's/^Session=.*$/Session=xfce/' /home/$USER/.dmrc
   else
   apt-get update
-  apt-get install -y xorg xfce4 lightdm iceweasel
-  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=imx6/"
-  sed -i 's/^Session=.*$/Session=xfce/' /home/imx6/.dmrc
+  apt-get install -y bsp-cuboxi xserver-xorg xfce4 lightdm xinit xserver-xorg-video-imx-viv
+  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=$USER/"
+  sed -i 's/^Session=.*$/Session=xfce/' /home/$USER/.dmrc
   whiptail --fb --msgbox "You should restart now." 20 60 1
 fi
 }
@@ -676,7 +678,6 @@ do_swap_menu() {
 
 do_gui_menu() {
 FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "One Click Installer Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-    "C1 LXDE" "[Sometimes we all need a GUI]" \
     "C2 xfce" "[xfce your thing? Click here!]" \
     "C3 console" "[Done with GUI? Return to console]" \
     "C4 GUI-Return" "[Return to GUI]" \
@@ -686,7 +687,6 @@ FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --m
     return 0
   elif [ $RET -eq 0 ]; then
     case "$FUN" in
-      C1\ *) do_lxde ;;
       C2\ *) do_xfce ;;
       C3\ *) do_console ;;
       C4\ *) do_lightdm ;;
