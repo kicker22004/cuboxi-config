@@ -8,7 +8,7 @@ ASK_TO_REBOOT=0
 DRIVE=/tmp/drivelist
 VERSION=`lsb_release -a`
 CODENAME=`lsb_release -c -s`
-USER=`whoami`
+USER=`users`
 clear
 
 whiptail --fb --msgbox "$VERSION" --title "This is your system information." 20 60 1
@@ -36,7 +36,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 II                                                              II
 II                                                              II
 II                 Information about imx6-config                II
-II                  Version 0.5 from 05-31-2015                 II
+II                  Version 0.6 from 06-09-2015                 II
 II                  Supported devices: SolidRuns                II
 II                                                              II
 II                        * Hummingboard                        II
