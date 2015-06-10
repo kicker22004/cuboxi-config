@@ -460,6 +460,7 @@ EOF
 # UNCONFIGURED FSTAB FOR BASE SYSTEM
 ${selected_boot}1  /           ext4    defaults,noatime        0       0
 EOF
+ sed -i 's/Imx6 (.*)/Imx6 (NOT SD-CARD)/g' /mnt/etc/init.d/bootsplash
  sync
  umount /mnt
  whiptail --fb --msgbox "After Reboot you will be loading off the $selected_boot." 20 60 1
