@@ -12,6 +12,4 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 
 echo "Booting Debian for Imx6 (SD-CARD)..." >> /dev/tty0
-fbi -vt 1 -noverbose -d /dev/fb0 /etc/bootsplash.png
-sleep 4
-pkill fbi
+fbi -once -timeout 5 -noverbose -vt 6 /etc/bootsplash.png
