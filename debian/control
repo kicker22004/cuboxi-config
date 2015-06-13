@@ -12,6 +12,7 @@ Package: imx6-config
 Architecture: any
 Depends:
  ${shlibs:Depends}, ${misc:Depends},
+ gksu,
  fbi, build-essential, rsync, lsb-release,
  util-linux, grep, sed, coreutils, parted, e2fsprogs,
 Description: Configuration tool for Cubox-i and Hummingboard

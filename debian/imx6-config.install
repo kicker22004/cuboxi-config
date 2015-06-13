@@ -3,3 +3,4 @@ Build-Files/imx6-config /usr/bin/
 Build-Files/imx6-config.sh /etc/profile.d/
 Build-Files/bootsplash.png /etc/
 modules/expand-fs.sh => /usr/share/imx6-config/expand-fs
+imx6-config.desktop /usr/share/applications

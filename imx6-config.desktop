@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=imx6-config
+GenericName=i.MX6 Config
+Comment=change system settings on i.MX6
+TryExec=imx6-config
+Exec=imx6-config
+Terminal=true
+Type=Application
+#Icon=
+Categories=System;Settings;ConsoleOnly;
+StartupNotify=true
