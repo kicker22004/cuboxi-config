@@ -1,10 +1,10 @@
 #! /bin/sh
 ### BEGIN INIT INFO
 # Provides:          bootsplash
-# Required-Start:    
-# Required-Stop:     glibc
+# Required-Start:    $local_fs
+# Required-Stop:     
 # Default-Start:     S
-# Default-Stop:
+# Default-Stop:      S
 # Short-Description: Show this to console during boot
 ### END INIT INFO
 
