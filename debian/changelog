@@ -1,3 +1,10 @@
+imx6-config (0.7) unstable; urgency=medium
+
+  * Moved Gui sections to standalone script for easier edits.
+  * Clean up main script.
+
+ -- Kicker22004 <privacy@not.givin>  Mon, 15 Jun 2015 16:05:10 -0700
+
 imx6-config (0.6) unstable; urgency=medium
 
   * Removed LXDE until more testing.
