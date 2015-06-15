@@ -1,0 +1,255 @@
+#!/bin/bash
+INTERACTIVE=True
+ASK_TO_REBOOT=0
+CODENAME=`lsb_release -c -s`
+INSTALLER="apt-get install -y"
+USER=`users`
+
+
+#Test Internet to make sure there will be no issues with no net.
+  wget -q --tries=10 --timeout=20 --spider http://google.com
+  if [[ $? -eq 0 ]]; then
+        echo "Online"
+  else
+    whiptail --fb --msgbox "I'm sorry but I couldn't detect a working internet connection, Leaving." 20 60 1
+    exit 0
+  fi
+
+clear
+calc_wt_size() {
+  # NOTE: it's tempting to redirect stderr to /dev/null, so supress error 
+  # output from tput. However in this case, tput detects neither stdout or 
+  # stderr is a tty and so only gives default 80, 24 values
+  WT_HEIGHT=17
+  WT_WIDTH=$(tput cols)
+
+  if [ -z "$WT_WIDTH" ] || [ "$WT_WIDTH" -lt 60 ]; then
+    WT_WIDTH=80
+  fi
+  if [ "$WT_WIDTH" -gt 178 ]; then
+    WT_WIDTH=120
+  fi
+  WT_MENU_HEIGHT=$(($WT_HEIGHT-8))
+}
+
+do_finish() {
+  if [ $ASK_TO_REBOOT -eq 1 ]; then
+    whiptail --fb --yesno "Would you like to reboot now?" 20 60 2
+    if [ $? -eq 0 ]; then # yes
+      sync
+      reboot
+    fi
+  fi
+  exit 1
+}
+
+	#############################
+	#                           #
+	#                           #
+	#  Wheezy XFCE Installer    #
+	#                           #
+	#############################
+do_xfce() {
+whiptail --fb --msgbox "This will take some time to complete depending on your internet speed. Please Press Enter." 20 60 1
+# This will install check for Wheezy and install.
+  if [ $CODENAME = wheezy ]; then
+        
+#Needed Files For GUI.
+	apt-get update
+        $INSTALLER xfce4
+        $INSTALLER bsp-cuboxi
+        $INSTALLER  xserver-xorg-core
+        $INSTALLER lightdm
+        $INSTALLER  xinit
+        $INSTALLER gpu-viv-bin-v4-x11
+        $INSTALLER  xserver-xorg-video-imx-viv
+        #
+        #Toss Extra Packages here if any.
+        $INSTALLER chromium > /dev/null 2>&1
+        $INSTALLER gstreamer0.10-plugins-ugly > /dev/null 2>&1
+        $INSTALLER gstreamer0.10-plugins-good > /dev/null 2>&1
+        $INSTALLER gstreamer0.10-plugins-base > /dev/null 2>&1
+        $INSTALLER gstreamer0.10-plugins-bad > /dev/null 2>&1
+        $INSTALLER gstreamer0.10-imx > /dev/null 2>&1
+        #
+  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=$USER/"
+  sed -i 's/^Session=.*$/Session=xfce/' /home/$USER/.dmrc
+  whiptail --fb --msgbox "You should restart now." 20 60 1
+  ASK_TO_REBOOT=1
+fi
+	#############################
+	#                           #
+	#                           #
+	#  Jessie XFCE Installer    #
+	#                           #
+	#############################
+
+# This will check for jessie and install xfce4.
+   if [ $CODENAME = jessie ]; then
+   whiptail --fb --msgbox "Sorry your on Jessie, Still under development." 20 60 1
+   return $RET
+#Disabled for now, Comment out these two lines ^^ to test.
+
+#Needed Files For GUI.
+        apt-get update
+        $INSTALLER xfce4
+        $INSTALLER bsp-cuboxi
+        $INSTALLER  xserver-xorg-core
+        $INSTALLER lightdm
+        $INSTALLER  xinit
+        #
+        #Toss Extra Packages here if any.
+#        $INSTALLER chromium > /dev/null 2>&1
+#        $INSTALLER gstreamer1.0-imx-x11 > /dev/null 2>&1
+#        $INSTALLER  xserver-xorg-video-imx-viv > /dev/null 2>&1
+#        $INSTALLER gpu-viv-bin-v4-x11 > /dev/null 2>&1
+        #
+  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=$USER/"
+  sed -i 's/^Session=.*$/Session=xfce/' /home/$USER/.dmrc
+  whiptail --fb --msgbox "You should restart now." 20 60 1
+  ASK_TO_REBOOT=1
+fi
+	#############################
+	#                           #
+	#                           #
+	#  Trusty XFCE Installer    #
+	#                           #
+	#############################
+# This will install check for Trusty and install.
+   if [ $CODENAME = trusty ]; then
+   whiptail --fb --msgbox "Sorry your on Trusty, Still under development." 20 60 1
+   return $RET
+fi
+whiptail --fb --msgbox "Your Distrobution couldn't be found!, Leaving...." 20 60 0
+}
+
+	#############################
+	#                           #
+	#                           #
+	#  Wheezy LXDE Installer    #
+	#                           #
+	#############################
+
+# LXDE Installer.
+do_lxde() {
+whiptail --fb --msgbox "This will take some time to complete depending on your internet speed. Please Press Enter." 20 60 0
+# This will install check for Wheezy and install.
+  if [ $CODENAME = wheezy ]; then
+
+#Needed Files For GUI.
+        apt-get update
+        $INSTALLER lxde
+        $INSTALLER bsp-cuboxi
+        $INSTALLER  xserver-xorg-core
+        $INSTALLER lightdm
+        $INSTALLER  xinit
+        $INSTALLER gpu-viv-bin-v4-x11
+        $INSTALLER  xserver-xorg-video-imx-viv
+        #
+        #Toss Extra Packages here if any.
+        $INSTALLER chromium > /dev/null 2>&1 
+        $INSTALLER gstreamer0.10-plugins-good > /dev/null 2>&1
+        $INSTALLER gstreamer0.10-plugins-ugly > /dev/null 2>&1 
+        $INSTALLER gstreamer0.10-plugins-base > /dev/null 2>&1 
+        $INSTALLER gstreamer0.10-plugins-bad > /dev/null 2>&1 
+        $INSTALLER gstreamer0.10-imx > /dev/null 2>&1 
+        #
+  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=$USER/"
+  sed -i 's/^Session=.*$/Session=LXDE/' /home/$USER/.dmrc > /dev/null 2>&1
+  whiptail --fb --msgbox "You should restart now." 20 60 1
+  ASK_TO_REBOOT=1
+fi
+
+	#############################
+	#                           #
+	#                           #
+	#  Jessie LXDE Installer    #
+	#                           #
+	#############################
+
+# This will check for jessie and install xfce4.
+   if [ $CODENAME = jessie ]; then
+   whiptail --fb --msgbox "Sorry your on Jessie, Still under development." 20 60 1
+   return $RET
+#Disabled for now, Comment out these two lines ^^ to test.
+
+#Needed Files For GUI.
+        apt-get update
+        $INSTALLER lxde
+        $INSTALLER bsp-cuboxi
+        $INSTALLER  xserver-xorg-core
+        $INSTALLER lightdm
+        $INSTALLER  xinit
+        #
+        #Toss Extra Packages here if any.
+#        $INSTALLER chromium > /dev/null 2>&1
+#        $INSTALLER gstreamer1.0-imx-x11 > /dev/null 2>&1
+#        $INSTALLER  xserver-xorg-video-imx-viv > /dev/null 2>&1
+#        $INSTALLER gpu-viv-bin-v4-x11 > /dev/null 2>&1
+        #
+  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=$USER/"
+  sed -i 's/^Session=.*$/Session=LXDE/' /home/$USER/.dmrc > /dev/null 2>&1
+  whiptail --fb --msgbox "You should restart now." 20 60 1
+  ASK_TO_REBOOT=1
+fi
+
+# This will install check for Trusty and install.
+   if [ $CODENAME = trusty ]; then
+   whiptail --fb --msgbox "Sorry your on Trusty, Still under development." 20 60 1
+   return $RET
+fi
+whiptail --fb --msgbox "Your Distrobution couldn't be found!, Leaving...." 20 60 0
+}
+
+
+do_console() {
+whiptail --fb --yesno "Return to Console?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    update-rc.d lightdm disable 2
+    whiptail --fb --msgbox "You should restart now." 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+}
+
+do_lightdm() {
+whiptail --fb --yesno "Return to GUI?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    update-rc.d lightdm enable 2
+    whiptail --fb --msgbox "You should restart now." 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
+}
+
+calc_wt_size
+while true; do
+  FUN=$(whiptail --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Setup Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Finish --ok-button Select \
+    "1 XFCE" "[xfce installer]" \
+    "2 LXDE" "[lxde installer]" \
+    "3 Console" "[Return to Console]" \
+    "4 Return GUI" "[Fall back to a GUI]" \
+    3>&1 1>&2 2>&3)
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    do_finish
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      1\ *) do_xfce ;;
+      2\ *) do_lxde ;;
+      3\ *) do_console ;;
+      4\ *) do_lightdm ;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running option $FUN" 20 60 1
+  else
+    exit 1
+  fi
+done
