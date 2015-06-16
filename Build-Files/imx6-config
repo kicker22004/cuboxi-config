@@ -8,8 +8,23 @@ ASK_TO_REBOOT=0
 DRIVE=/tmp/drivelist
 VERSION=`lsb_release -a`
 CODENAME=`lsb_release -c -s`
-USER=`users`
 clear
+
+# Make sure we run with root privileges
+if [ $UID != 0 ]; then
+	# not root, use sudo
+	echo "This script needs root privileges, rerunning it now using sudo!"
+	sudo "${SHELL}" "$0" $*
+	exit $?
+fi
+
+# get real username
+if [ $UID = 0 ] && [ ! -z "$SUDO_USER" ]; then
+	USER="$SUDO_USER"
+else
+	USER="$(whoami)"
+fi
+# Note that USER may still end up as root, if people run it as root instead of using sudo!
 
 whiptail --fb --msgbox "$VERSION" --title "This is your system information." 20 60 1
 
@@ -148,7 +163,7 @@ do_swap_install_check() {
      if [ ! -f /etc/dphys-swapfile ]; then
     echo CONF_SWAPSIZE= > /etc/dphys-swapfile
    else
-	sudo sed -i 's/#CONF_SWAPSIZE/CONF_SWAPSIZE/' /etc/dphys-swapfile
+	sed -i 's/#CONF_SWAPSIZE/CONF_SWAPSIZE/' /etc/dphys-swapfile
      fi  
      whiptail --fb --msgbox " All done, Check swap size option to adjust it." 20 60 1
      do_swap_menu
