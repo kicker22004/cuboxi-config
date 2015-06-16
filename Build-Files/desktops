@@ -120,7 +120,6 @@ fi
    whiptail --fb --msgbox "Sorry your on Trusty, Still under development." 20 60 1
    return $RET
 fi
-whiptail --fb --msgbox "Your Distrobution couldn't be found!, Leaving...." 20 60 0
 }
 
 	#############################
@@ -198,7 +197,6 @@ fi
    whiptail --fb --msgbox "Sorry your on Trusty, Still under development." 20 60 1
    return $RET
 fi
-whiptail --fb --msgbox "Your Distrobution couldn't be found!, Leaving...." 20 60 0
 }
 
 
