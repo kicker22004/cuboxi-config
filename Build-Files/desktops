@@ -40,7 +40,7 @@ do_finish() {
       reboot
     fi
   fi
-  exit 1
+ exit 0
 }
 
 	#############################
@@ -53,29 +53,35 @@ do_xfce() {
 whiptail --fb --msgbox "This will take some time to complete depending on your internet speed. Please Press Enter." 20 60 1
 # This will install check for Wheezy and install.
   if [ $CODENAME = wheezy ]; then
-        
+  if dpkg -s xfce4; then
+  whiptail --fb --msgbox " You have already installed xfce on this device, setting as default GUI" 20 60 0
+  sed -i 's/^Session=.*$/Session=xfce/' /home/$USER/.dmrc > /dev/null 2>&1
+  return $RET
+else 
 #Needed Files For GUI.
 	apt-get update
         $INSTALLER xfce4
         $INSTALLER bsp-cuboxi
-        $INSTALLER  xserver-xorg-core
+        $INSTALLER xserver-xorg-core
         $INSTALLER lightdm
-        $INSTALLER  xinit
-        $INSTALLER gpu-viv-bin-v4-x11
-        $INSTALLER  xserver-xorg-video-imx-viv
+        $INSTALLER xinit
+	$INSTALLER gpu-viv-bin
+        $INSTALLER gpu-viv-bin-x11
+        $INSTALLER xserver-xorg-video-imx-viv
         #
         #Toss Extra Packages here if any.
-        $INSTALLER chromium > /dev/null 2>&1
-        $INSTALLER gstreamer0.10-plugins-ugly > /dev/null 2>&1
-        $INSTALLER gstreamer0.10-plugins-good > /dev/null 2>&1
-        $INSTALLER gstreamer0.10-plugins-base > /dev/null 2>&1
-        $INSTALLER gstreamer0.10-plugins-bad > /dev/null 2>&1
-        $INSTALLER gstreamer0.10-imx > /dev/null 2>&1
+        $INSTALLER chromium
+        $INSTALLER gstreamer0.10-plugins-ugly
+        $INSTALLER gstreamer0.10-plugins-good
+        $INSTALLER gstreamer0.10-plugins-base
+        $INSTALLER gstreamer0.10-plugins-bad
+        $INSTALLER gstreamer0.10-imx
         #
   sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=$USER/"
   sed -i 's/^Session=.*$/Session=xfce/' /home/$USER/.dmrc
   whiptail --fb --msgbox "You should restart now." 20 60 1
   ASK_TO_REBOOT=1
+fi
 fi
 	#############################
 	#                           #
@@ -94,9 +100,9 @@ fi
         apt-get update
         $INSTALLER xfce4
         $INSTALLER bsp-cuboxi
-        $INSTALLER  xserver-xorg-core
+        $INSTALLER xserver-xorg-core
         $INSTALLER lightdm
-        $INSTALLER  xinit
+        $INSTALLER xinit
         #
         #Toss Extra Packages here if any.
 #        $INSTALLER chromium > /dev/null 2>&1
@@ -134,31 +140,36 @@ do_lxde() {
 whiptail --fb --msgbox "This will take some time to complete depending on your internet speed. Please Press Enter." 20 60 0
 # This will install check for Wheezy and install.
   if [ $CODENAME = wheezy ]; then
-
+  if dpkg -s lxde; then
+whiptail --fb --msgbox " You have already installed lxde on this device, Setting to default GUI" 20 60 0
+sed -i 's/^Session.*$/Session=LXDE/' /home/$USER/.dmrc > /dev/null 2>&1
+return $RET
+else
 #Needed Files For GUI.
         apt-get update
         $INSTALLER lxde
         $INSTALLER bsp-cuboxi
-        $INSTALLER  xserver-xorg-core
+        $INSTALLER xserver-xorg-core
         $INSTALLER lightdm
-        $INSTALLER  xinit
-        $INSTALLER gpu-viv-bin-v4-x11
-        $INSTALLER  xserver-xorg-video-imx-viv
+        $INSTALLER xinit
+	$INSTALLER gpu-viv-bin
+        $INSTALLER gpu-viv-bin-x11
+        $INSTALLER xserver-xorg-video-imx-viv
         #
         #Toss Extra Packages here if any.
-        $INSTALLER chromium > /dev/null 2>&1 
-        $INSTALLER gstreamer0.10-plugins-good > /dev/null 2>&1
-        $INSTALLER gstreamer0.10-plugins-ugly > /dev/null 2>&1 
-        $INSTALLER gstreamer0.10-plugins-base > /dev/null 2>&1 
-        $INSTALLER gstreamer0.10-plugins-bad > /dev/null 2>&1 
-        $INSTALLER gstreamer0.10-imx > /dev/null 2>&1 
+        $INSTALLER chromium
+        $INSTALLER gstreamer0.10-plugins-good
+        $INSTALLER gstreamer0.10-plugins-ugly 
+        $INSTALLER gstreamer0.10-plugins-base 
+        $INSTALLER gstreamer0.10-plugins-bad 
+        $INSTALLER gstreamer0.10-imx
         #
   sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=$USER/"
   sed -i 's/^Session=.*$/Session=LXDE/' /home/$USER/.dmrc > /dev/null 2>&1
   whiptail --fb --msgbox "You should restart now." 20 60 1
   ASK_TO_REBOOT=1
 fi
-
+fi
 	#############################
 	#                           #
 	#                           #
@@ -176,9 +187,9 @@ fi
         apt-get update
         $INSTALLER lxde
         $INSTALLER bsp-cuboxi
-        $INSTALLER  xserver-xorg-core
+        $INSTALLER xserver-xorg-core
         $INSTALLER lightdm
-        $INSTALLER  xinit
+        $INSTALLER xinit
         #
         #Toss Extra Packages here if any.
 #        $INSTALLER chromium > /dev/null 2>&1
@@ -207,6 +218,7 @@ whiptail --fb --yesno "Return to Console?" 20 60 2 \
   if [ $RET -eq 0 ]; then
     update-rc.d lightdm disable 2
     whiptail --fb --msgbox "You should restart now." 20 60 1
+    ASK_TO_REBOOT=1
   elif [ $RET -eq 1 ]; then
     whiptail --fb --msgbox "Leaving" 20 60 1
   else
@@ -221,6 +233,7 @@ whiptail --fb --yesno "Return to GUI?" 20 60 2 \
   if [ $RET -eq 0 ]; then
     update-rc.d lightdm enable 2
     whiptail --fb --msgbox "You should restart now." 20 60 1
+    ASK_TO_REBOOT=1
   elif [ $RET -eq 1 ]; then
     whiptail --fb --msgbox "Leaving" 20 60 1
   else

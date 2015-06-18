@@ -49,15 +49,15 @@ do_about() {
   whiptail --fb --msgbox "\
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 II                                                              II
-II                                                              II
 II                 Information about imx6-config                II
-II                  Version 0.7 from 06-15-2015                 II
+II                  Version 0.8 from 06-15-2015                 II
 II                  Supported devices: SolidRuns                II
 II                                                              II
 II                        * Hummingboard                        II
 II                        * Cuboxi                              II
 II                                                              II
 II                 More info at WWW.SOLID-RUN.COM               II
+II              Build and Maintained by: Kicker22004            II
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII \
 " 20 70 1
 }

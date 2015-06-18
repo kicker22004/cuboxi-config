@@ -1,45 +1,54 @@
+imx6-config (0.8) stable; urgency=low
+
+  * Modifications to Desktop script.
+  * Version bump
+  * First Build Release
+
+ -- Kicker22004 <solidrun@linux> Thu, 18 Jun 2015 10:17:14 +0000
+
 imx6-config (0.7) unstable; urgency=medium
 
   * Moved Gui sections to standalone script for easier edits.
   * Clean up main script.
 
- -- Kicker22004 <privacy@not.givin>  Mon, 15 Jun 2015 16:05:10 -0700
+ -- Kicker22004 <privacy@not.givin> Mon, 15 Jun 2015 16:05:10 -0700
 
 imx6-config (0.6) unstable; urgency=medium
 
   * Removed LXDE until more testing.
   * Added whoami to check for active user.
 
- -- Kicker22004 <privacy@not.givin>  Tue, 09 Jun 2015 09:29:10 -0700
+ -- Kicker22004 <privacy@not.givin> Tue, 09 Jun 2015 09:29:10 -0700
  
 imx6-config (0.5) unstable; urgency=medium
 
   * Easy Copy from Sdcard to Usb/External drive.
   * Changed to new default bootsplash.
 
- -- Kicker22004 <privacy@not.given>  Sun, 31 May 2015 21:03:36 -0700
+ -- Kicker22004 <privacy@not.given> Sun, 31 May 2015 21:03:36 -0700
 
 imx6-config (0.4) unstable; urgency=low
 
   * Added Swap Options
 
- -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 20:25:30 +0000
+ -- Kicker22004 <privacy@not.given> Tue, 12 May 2015 20:25:30 +0000
 
 imx6-config (0.3) unstable; urgency=low
 
-  * Removed Toggle options, Not needed as Pulseaudio with Pavucontrol can now see outputs.
+  * Removed Toggle options, Not needed as Pulseaudio with Pavucontrol can 
+now see outputs.
 
- -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 19:43:37 +0000
+ -- Kicker22004 <privacy@not.given> Tue, 12 May 2015 19:43:37 +0000
 
 imx6-config (0.2) unstable; urgency=low
 
   * Removing features from old script.
   * renames from cubox to imx6
 
- -- Kicker22004 <privacy@not.given>  Tue, 12 May 2015 19:30:13 +0000
+ -- Kicker22004 <privacy@not.given> Tue, 12 May 2015 19:30:13 +0000
 
 imx6-config (0.1) unstable; urgency=low
 
    * Initial release
 
-  -- Unknown <unknown>  Sun, 08 Feb 2015 19:52:29 +0000
+  -- Unknown <unknown> Sun, 08 Feb 2015 19:52:29 +0000
