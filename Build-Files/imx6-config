@@ -212,6 +212,7 @@ else
 
 do_desktops() {
 whiptail --fb --msgbox "Installing a GUI can take some time... Please be patient" 20 60 1
+chmod +x /usr/share/imx6-config/desktops
 /usr/share/imx6-config/desktops
 }
 
