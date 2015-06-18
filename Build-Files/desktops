@@ -5,6 +5,20 @@ CODENAME=`lsb_release -c -s`
 INSTALLER="apt-get install -y"
 USER=`users`
 
+# Make sure we run with root privileges
+if [ $UID != 0 ]; then
+	# not root, use sudo
+	echo "This script needs root privileges, rerunning it now using sudo!"
+	sudo "${SHELL}" "$0" $*
+	exit $?
+fi
+
+# get real username
+if [ $UID = 0 ] && [ ! -z "$SUDO_USER" ]; then
+	USER="$SUDO_USER"
+else
+	USER="$(whoami)"
+fi
 
 #Test Internet to make sure there will be no issues with no net.
   wget -q --tries=10 --timeout=20 --spider http://google.com
