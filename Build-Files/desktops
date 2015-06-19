@@ -3,7 +3,6 @@ INTERACTIVE=True
 ASK_TO_REBOOT=0
 CODENAME=`lsb_release -c -s`
 INSTALLER="apt-get install -y"
-USER=`users`
 
 # Make sure we run with root privileges
 if [ $UID != 0 ]; then
@@ -69,6 +68,7 @@ whiptail --fb --msgbox "This will take some time to complete depending on your i
   if [ $CODENAME = wheezy ]; then
   if dpkg -s xfce4; then
   whiptail --fb --msgbox " You have already installed xfce on this device, setting as default GUI" 20 60 0
+  sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=$USER/"
   sed -i 's/^Session=.*$/Session=xfce/' /home/$USER/.dmrc > /dev/null 2>&1
   return $RET
 else 
@@ -156,6 +156,7 @@ whiptail --fb --msgbox "This will take some time to complete depending on your i
   if [ $CODENAME = wheezy ]; then
   if dpkg -s lxde; then
 whiptail --fb --msgbox " You have already installed lxde on this device, Setting to default GUI" 20 60 0
+sed /etc/lightdm/lightdm.conf -i -e "s/^#autologin-user=.*/autologin-user=$USER/"
 sed -i 's/^Session.*$/Session=LXDE/' /home/$USER/.dmrc > /dev/null 2>&1
 return $RET
 else
