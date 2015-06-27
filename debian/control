@@ -14,7 +14,7 @@ Depends:
  ${shlibs:Depends}, ${misc:Depends},
  gksu,
  fbi, build-essential, rsync, lsb-release,
- util-linux, grep, sed, coreutils, parted, e2fsprogs,
+ util-linux, grep, sed, coreutils, parted, e2fsprogs, lm-sensors,
 Description: Configuration tool for Cubox-i and Hummingboard
  Provides an intuitive and easy user-interface to many configuration options
  that are available on Cubox-i and Hummingboard devices, as well as fully
