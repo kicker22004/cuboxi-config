@@ -2,7 +2,7 @@ imx6-config (0.9) stable; urgency=low
 
   * Added Fan controls (Advanced menu).
 
- -- Kicker22004 <solidrun@linux> Sat, 27 Jun 2015 09:32:28 +0000
+ -- Kicker22004 <privacy@not.givin> Sat, 27 Jun 2015 09:32:28 +0000
  
 imx6-config (0.8) stable; urgency=low
 
@@ -10,7 +10,7 @@ imx6-config (0.8) stable; urgency=low
   * Version bump
   * First Build Release
 
- -- Kicker22004 <solidrun@linux> Thu, 18 Jun 2015 10:17:14 +0000
+ -- Kicker22004 <privacy@not.givin> Thu, 18 Jun 2015 10:17:14 +0000
 
 imx6-config (0.7) unstable; urgency=medium
 
