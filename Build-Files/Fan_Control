@@ -1,0 +1,40 @@
+#!/bin/bash
+TEMP_SENSOR="/sys/class/thermal/thermal_zone0/temp"
+MAX_TEMP="55000"
+DIRECTORY='/sys/class/gpio/gpio1'
+FILE=/usr/share/fancron
+CRON='*  *    * * *   root    /usr/share/imx6-config/Fan_Control'
+
+#Setup Cron for 60sec checks
+if [ -f $FILE ]; then
+   echo "File Found Continue"
+else
+   echo "The File '$FILE' Does Not Exist"
+   touch $FILE
+   echo "$CRON" >> /etc/crontab
+fi
+
+#Check for gpio settings.
+if [ -d "$DIRECTORY" ]; then
+  # Control will enter here if $DIRECTORY exists.
+  echo "Working"
+else
+  echo "Not Working, Fixing.."
+  echo 1 > /sys/class/gpio/export
+  echo out > /sys/class/gpio/gpio1/direction
+fi
+#Run Temp Checks
+      for CURRENT_TEMP in $(cat $TEMP_SENSOR); do 
+
+#debug options
+#echo "$CURRENT_TEMP"
+#echo "$MAX_TEMP"
+    if [ "$CURRENT_TEMP" -gt "$MAX_TEMP" ]; then
+	echo "It's High, Turning fan on"
+	echo 1 > /sys/class/gpio/gpio1/value
+    else
+	echo "It's Low, Turning fan off"
+	echo 0 > /sys/class/gpio/gpio1/value
+    fi
+clear
+done
