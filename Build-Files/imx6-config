@@ -8,6 +8,8 @@ ASK_TO_REBOOT=0
 DRIVE=/tmp/drivelist
 VERSION=`lsb_release -a`
 CODENAME=`lsb_release -c -s`
+FILE=/usr/share/fancron
+CRON='*  *    * * *   root    /usr/share/imx6-config/Fan_Control'
 clear
 
 # Make sure we run with root privileges
@@ -137,6 +139,28 @@ else
     whiptail --fb --msgbox "Warning!! If you don't know what your doing then leave the next menu by pressing CTRL+X" 20 60 1
     nano /boot/uEnv.txt
 fi 
+}
+
+do_fanon() {
+    echo 1 > /sys/class/gpio/gpio1/value
+    whiptail --fb --msgbox " You Fan should be on now!, It will shut off within 60 seconds" 10 60 1
+  do_fan_menu
+}
+
+do_fan_options() {
+FAN=$(whiptail --title "Fan Settings" --radiolist \
+"What Temp Should the fan turn on? (Default 55C)" 15 60 4 \
+"35" "Set To 35C" OFF \
+"45" "Set To 45C" OFF \
+"55" "Set To 55C" ON \
+"65" "Set To 65C" OFF 3>&1 1>&2 2>&3)
+
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
+ whiptail --fb --msgbox  "You set the fan to turn on at: $FAN C" 20 60 0
+    sed -i 's/MAX_TEMP=.*/MAX_TEMP="'$FAN'000"/' /usr/share/imx6-config/Fan_Control
+    do_fan_menu
+fi
 }
 
 do_swap_install() {
@@ -565,11 +589,46 @@ do_internationalisation_menu() {
   fi
 }
 
+do_fan_menu() {
+FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Fan Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+    "F1 FanON" "[Test your Fan!]" \
+    "F2 Max_Temp" "[Change when your fan should turn on]" \
+    3>&1 1>&2 2>&3)
+  RET=$?
+#This needs to setup Cron to 60 second check
+if [ -f $FILE ]; then
+   echo "Cron Was Set" &> /dev/null
+else
+   echo "The File '$FILE' Does Not Exist" &> /dev/null
+   touch $FILE
+   echo "$CRON" >> /etc/crontab
+fi
+#To make sure sensors is installed
+if dpkg -s lm-sensors; then
+   echo "sensors are installed" &> /dev/null
+   clear
+else
+   whiptail --fb --msgbox "You don't have lm-sensors installed, please install now." 20 60 0
+   apt-get install lm-sensors
+   clear
+fi
+  if [ $RET -eq 1 ]; then
+    return 0
+  elif [ $RET -eq 0 ]; then
+    case "$FUN" in
+      F1\ *) do_fanon ;;
+      F2\ *) do_fan_options ;;
+      *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
+  fi
+}
+
 do_advanced_menu() {
   FUN=$(whiptail --fb --title "IMX6 Software Configuration Tool (imx6-config)" --menu "Advanced Options" $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
     "A1 Hostname" "[Set the visible name for this Imx6 on a network]" \
     "A2 SSH" "[Enable/Disable remote command line access to your Imx6 using SSH]" \
     "A3 Uboot" "[Make uEnv.txt edits]" \
+    "A4 Fan" "[For those with Fan's on their HB]" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -579,6 +638,7 @@ do_advanced_menu() {
       A1\ *) do_change_hostname ;;
       A2\ *) do_ssh ;;
       A3\ *) do_uboot ;;
+      A4\ *) do_fan_menu ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
