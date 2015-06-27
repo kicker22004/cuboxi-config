@@ -603,6 +603,15 @@ else
    touch $FILE
    echo "$CRON" >> /etc/crontab
 fi
+#Check for gpio settings.
+if [ -d "$DIRECTORY" ]; then
+  # Control will enter here if $DIRECTORY exists.
+  echo "Working"
+else
+  echo "Not Working, Fixing.."
+  echo 1 > /sys/class/gpio/export
+  echo out > /sys/class/gpio/gpio1/direction
+fi
 #To make sure sensors is installed
 if dpkg -s lm-sensors; then
    echo "sensors are installed" &> /dev/null
