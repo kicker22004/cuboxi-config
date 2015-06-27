@@ -52,7 +52,7 @@ do_about() {
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 II                                                              II
 II                 Information about imx6-config                II
-II                  Version 0.8 from 06-18-2015                 II
+II                  Version 0.8 from 06-27-2015                 II
 II                  Supported devices: SolidRuns                II
 II                                                              II
 II                        * Hummingboard                        II
@@ -158,7 +158,9 @@ FAN=$(whiptail --title "Fan Settings" --radiolist \
 exitstatus=$?
 if [ $exitstatus = 0 ]; then
  whiptail --fb --msgbox  "You set the fan to turn on at: $FAN C" 20 60 0
+    service crond stop
     sed -i 's/MAX_TEMP=.*/MAX_TEMP="'$FAN'000"/' /usr/share/imx6-config/Fan_Control
+    service crond start
     do_fan_menu
 fi
 }
