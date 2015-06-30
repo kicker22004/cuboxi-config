@@ -158,9 +158,9 @@ FAN=$(whiptail --title "Fan Settings" --radiolist \
 exitstatus=$?
 if [ $exitstatus = 0 ]; then
  whiptail --fb --msgbox  "You set the fan to turn on at: $FAN C" 20 60 0
-    service crond stop
+    service cron stop
     sed -i 's/MAX_TEMP=.*/MAX_TEMP="'$FAN'000"/' /usr/share/imx6-config/Fan_Control
-    service crond start
+    service cron start
     do_fan_menu
 fi
 }
