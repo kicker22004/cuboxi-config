@@ -189,6 +189,7 @@ do_swap_install_check() {
      if [ ! -f /etc/dphys-swapfile ]; then
     echo CONF_SWAPSIZE= > /etc/dphys-swapfile
    else
+        apt-get install -y dphys-swapfile
 	sed -i 's/#CONF_SWAPSIZE/CONF_SWAPSIZE/' /etc/dphys-swapfile
      fi  
      whiptail --fb --msgbox " All done, Check swap size option to adjust it." 20 60 1
