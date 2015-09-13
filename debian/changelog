@@ -1,3 +1,9 @@
+imx6-config (0.10) stable; urgency=medium
+
+  * replace warning about unconfigured system with an "about" notice
+
+ -- Josua Mayer <privacy@not.given>  Sun, 13 Sep 2015 21:45:56 +0200
+
 imx6-config (0.9) stable; urgency=low
 
   * Added Fan controls (Advanced menu).

@@ -438,18 +438,7 @@ EOF
 fi
 }
 
-disable_imx6_config_at_boot() {
-  if [ -e /etc/profile.d/imx6-config.sh ]; then
-    rm -f /etc/profile.d/imx6-config.sh
-    sed -i /etc/inittab \
-      -e "s/^#\(.*\)#\s*IMX6CFG_TO_ENABLE\s*/\1/" \
-      -e "/#\s*IMX6CFG_TO_DISABLE/d"
-    telinit q
-  fi
-}
-
 do_finish() {
-  disable_imx6_config_at_boot
   if [ $ASK_TO_REBOOT -eq 1 ]; then
     whiptail --fb --yesno "Would you like to reboot now?" 20 60 2
     if [ $? -eq 0 ]; then # yes
@@ -475,7 +464,7 @@ do_apply_os_config() {
     printf "Setting flavour to %s based on os_config.json from NOOBS. May take a while\n" "$NOOBSFLAVOUR"
 
     if printf "%s" "$NOOBSFLAVOUR" | grep -q "Scratch"; then
-      disable_raspi_config_at_boot
+      disable_raspi_config_at_booot
       enable_boot_to_scratch
     else
       printf "Unrecognised flavour. Ignoring\n"
