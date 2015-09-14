@@ -64,7 +64,7 @@ do_finish() {
 	#############################
 do_xfce() {
 whiptail --fb --msgbox "This will take some time to complete depending on your internet speed. Please Press Enter." 20 60 1
-# This will install check for Wheezy and install.
+# This will check for Wheezy and install XFCE.
   if [ $CODENAME = wheezy ]; then
   if dpkg -s xfce4; then
   whiptail --fb --msgbox " You have already installed xfce on this device, setting as default GUI" 20 60 0
@@ -104,7 +104,7 @@ fi
 	#                           #
 	#############################
 
-# This will check for jessie and install xfce4.
+# This will check for jessie and install XFCE.
    if [ $CODENAME = jessie ]; then
    whiptail --fb --msgbox "Sorry your on Jessie, Still under development." 20 60 1
    return $RET
@@ -135,7 +135,7 @@ fi
 	#  Trusty XFCE Installer    #
 	#                           #
 	#############################
-# This will install check for Trusty and install.
+# This will check for Trusty and install XFCE.
    if [ $CODENAME = trusty ]; then
    whiptail --fb --msgbox "Sorry your on Trusty, Still under development." 20 60 1
    return $RET
@@ -152,7 +152,7 @@ fi
 # LXDE Installer.
 do_lxde() {
 whiptail --fb --msgbox "This will take some time to complete depending on your internet speed. Please Press Enter." 20 60 0
-# This will install check for Wheezy and install.
+# This will check for Wheezy and install LXDE.
   if [ $CODENAME = wheezy ]; then
   if dpkg -s lxde; then
 whiptail --fb --msgbox " You have already installed lxde on this device, Setting to default GUI" 20 60 0
@@ -192,7 +192,7 @@ fi
 	#                           #
 	#############################
 
-# This will check for jessie and install xfce4.
+# This will check for jessie and install LXDE.
    if [ $CODENAME = jessie ]; then
    whiptail --fb --msgbox "Sorry your on Jessie, Still under development." 20 60 1
    return $RET
@@ -218,7 +218,7 @@ fi
   ASK_TO_REBOOT=1
 fi
 
-# This will install check for Trusty and install.
+# This will check for Trusty and install.
    if [ $CODENAME = trusty ]; then
    whiptail --fb --msgbox "Sorry your on Trusty, Still under development." 20 60 1
    return $RET
