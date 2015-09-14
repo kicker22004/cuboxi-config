@@ -143,7 +143,7 @@ fi
 
 do_fanon() {
     echo 1 > /sys/class/gpio/gpio1/value
-    whiptail --fb --msgbox " You Fan should be on now!, It will shut off within 60 seconds" 10 60 1
+    whiptail --fb --msgbox " Your Fan should be on now!, It will shut off within 60 seconds" 10 60 1
   do_fan_menu
 }
 
