@@ -320,7 +320,7 @@ done
     v_disk=$(parted -s $selected_drive print|awk '/^Disk/ {print $3}'|sed 's/[Mm][Bb]//')
 
 # Create single partition
-    parted -s $selected_drive mkpart primary 0 ${v_disk}
+    echo -e "o\nn\np\n1\n\n\nw" | fdisk $selected_drive
 
 # Format the partition
     mke2fs -T ext4 "${selected_drive}1"
