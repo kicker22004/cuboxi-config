@@ -10,6 +10,7 @@ VERSION=`lsb_release -a`
 CODENAME=`lsb_release -c -s`
 FILE=/usr/share/fancron
 CRON='*  *    * * *   root    /usr/share/imx6-config/Fan_Control'
+rsynclog=/tmp/rsync.log
 clear
 
 # Make sure we run with root privileges
@@ -316,15 +317,15 @@ do
 done
 
 # Find size of disk
-    umount $selected_drive*
+    umount $selected_drive* >> /dev/null 2>&1
     v_disk=$(parted -s $selected_drive print|awk '/^Disk/ {print $3}'|sed 's/[Mm][Bb]//')
-
 # Create single partition
     echo -e "o\nn\np\n1\n\n\nw" | fdisk $selected_drive
 
 # Format the partition
     mke2fs -T ext4 "${selected_drive}1"
-    umount $selected_drive*
+    sync
+    clear
   elif [ $RET -eq 1 ]; then
     whiptail --fb --msgbox "Leaving" 20 60 1
     return $RET
@@ -346,11 +347,22 @@ done
         ((i=i+1)) 
     done 
     
-    EXCL_ARGS[$i]="--exclude=/boot/*" 
-  rsync -aH -p --progress -P ${EXCL_ARGS[@]} / /mnt
+    EXCL_ARGS[$i]="--exclude=/boot/*"
+  echo " Please be very patient, Depending on how large your system is this could take a while." 
+  echo " Trust me, We all hate waiting on this.....Probably me more than most...only had to run it countless times so that it goes smooth for you. :P "
+  rsync -aH -p -P ${EXCL_ARGS[@]} / /mnt > $rsynclog 2>&1
+  if [[ $? -ne 0 ]]; then
+      whiptail --fb --msgbox "Looks like something went wrong, Please check the log at $rsynclog for clues." 20 60 1
+  clear
+  echo "You had a failure while attempting to copy your system to ${selected_drive}1."
+  echo " Please check $rsynclog for the failure."
+  exit 
+  fi
   sync
   umount /mnt
   whiptail --fb --msgbox "Transfer Complete! Please use the Boot Select option to select the drive you want to load." 20 60 1 
+  rm $rsynclog
+  clear
   elif [ $RET -eq 1 ]; then
     return
     whiptail --fb --msgbox "Returning to Safty" 20 60 1
