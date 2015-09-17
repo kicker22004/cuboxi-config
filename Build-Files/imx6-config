@@ -435,9 +435,6 @@ fi
  mount ${selected_boot}1 /mnt
  sed -i "s;root=/dev/[a-zA-Z0-9]*;root=${selected_boot}1;1" /boot/uEnv.txt
  
- #Change fstab, This could be removed later if Builds are set to /dev/root.
- sed -i "s;^[a-zA-Z0-9/=\\]*[ ]*/[ ];/dev/root / ;1" /etc/fstab
- 
  sed -i 's/Imx6 (.*)/Imx6 (NOT SD-CARD)/g' /mnt/etc/init.d/bootsplash
  sync
  umount /mnt
