@@ -423,9 +423,8 @@ if [ $? -eq 0 ]; then
   then
  clear
  mount /dev/mmcblk0p1 /mnt
+ sed -i "s;root=/dev/[a-zA-Z0-9]*;root=/dev/mmcblk0p1;1" /mnt/boot/uEnv.txt
  cat <<EOF >/mnt/boot/uEnv.txt
-mmcargs=setenv bootargs root=/dev/mmcblk0p1 rootfstype=ext4 rootwait console=ttymxc0,115200n8 video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24,bpp=32 rd.dm=0 rd.luks=0 rd.lvm=0 raid=noautodetect quiet
-EOF
  umount /mnt
  whiptail --fb --msgbox "After Reboot you will be loading off the Sdcard." 20 60 1
  ASK_TO_REBOOT=1
@@ -435,9 +434,7 @@ fi
 # Anything Not mmcblk0
  clear
  mount ${selected_boot}1 /mnt
- cat <<EOF >/boot/uEnv.txt
-mmcargs=setenv bootargs root=${selected_boot}1 rootfstype=ext4 rootwait console=ttymxc0,115200n8 video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24,bpp=32 rd.dm=0 rd.luks=0 rd.lvm=0 raid=noautodetect quiet
-EOF
+ sed -i "s;root=/dev/[a-zA-Z0-9]*;root=${selected_boot}1;1" /mnt/boot/uEnv.txt
  cat <<EOF >/mnt/etc/fstab
 # UNCONFIGURED FSTAB FOR BASE SYSTEM
 ${selected_boot}1  /           ext4    defaults,noatime        0       0
