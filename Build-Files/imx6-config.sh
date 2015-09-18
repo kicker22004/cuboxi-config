@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Part of imx6-config http://github.com/kicker22004/imx6-config
 #
 # See LICENSE file for copyright and license details
@@ -10,4 +10,6 @@
 # line such as:
 # 1:2345:respawn:/bin/login -f root tty1 </dev/tty1 >/dev/tty1 2>&1 # IMX6CFG_TO_DISABLE
 
-echo ${color} "Welcome to Linux on i.MX6. This System comes preinstalled with \"imx6-config\", a user-friendly tool to manipulate system settings."
+color='\e[1;32m'
+echo -e ${color}"Welcome to Linux on i.MX6. This System comes preinstalled with \"imx6-config\", a user-friendly tool to manipulate system settings."
+tput sgr0
