@@ -79,8 +79,8 @@ else
         $INSTALLER xserver-xorg-core
         $INSTALLER lightdm
         $INSTALLER xinit
-	$INSTALLER gpu-viv-bin
-        $INSTALLER gpu-viv-bin-x11
+	$INSTALLER imx-gpu-viv
+        $INSTALLER imx-gpu-viv-x11
         $INSTALLER xserver-xorg-video-imx-viv
         #
         #Toss Extra Packages here if any.
@@ -167,8 +167,8 @@ else
         $INSTALLER xserver-xorg-core
         $INSTALLER lightdm
         $INSTALLER xinit
-	$INSTALLER gpu-viv-bin
-        $INSTALLER gpu-viv-bin-x11
+	$INSTALLER imx-gpu-viv
+        $INSTALLER imx-gpu-viv-x11
         $INSTALLER xserver-xorg-video-imx-viv
         #
         #Toss Extra Packages here if any.
