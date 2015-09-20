@@ -10,6 +10,11 @@
 # line such as:
 # 1:2345:respawn:/bin/login -f root tty1 </dev/tty1 >/dev/tty1 2>&1 # IMX6CFG_TO_DISABLE
 
-color='\e[1;32m'
-echo -e ${color}"Welcome to Linux on i.MX6. This System comes preinstalled with \"imx6-config\", a user-friendly tool to manipulate system settings."
-tput sgr0
+#Colors
+ESC_SEQ="\x1b["
+COL_RESET=$ESC_SEQ"39;49;00m"
+COL_BLUE=$ESC_SEQ"34;01m"
+COL_CYAN=$ESC_SEQ"36;01m"
+
+echo -e "$COL_CYAN Welcome to Linux on i.MX6. This System comes preinstalled with $COL_RESET $COL_CLUE \"imx6-config\" $COL_RESET $COL_CYAN, a user-friendly tool to manipulate system settings. $COL_RESET"
+
