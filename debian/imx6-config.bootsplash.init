@@ -13,7 +13,7 @@
 
 do_start () {
 
-    /usr/bin/fbi -T 1 -noverbose -a /etc/splash.png    
+    /usr/bin/fbi -T 1 -noverbose -a /etc/bootsplash.png    
     exit 0
 }
 
