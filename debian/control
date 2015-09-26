@@ -13,7 +13,7 @@ Architecture: any
 Depends:
  ${shlibs:Depends}, ${misc:Depends},
  gksu,
- fbi, build-essential, rsync, lsb-release, wicd-cli, wicd-curses
+ fbi, build-essential, rsync, lsb-release, wicd-cli, wicd-curses,
  util-linux, grep, sed, coreutils, parted, e2fsprogs, lm-sensors,
 Description: Configuration tool for Cubox-i and Hummingboard
  Provides an intuitive and easy user-interface to many configuration options
