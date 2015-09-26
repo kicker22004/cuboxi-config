@@ -1,3 +1,10 @@
+imx6-config (0.12) stable; urgency=low
+
+  * Added Wifi Config in the form of wicd-curses
+  * Added easy Ip info.
+
+ -- Kicker22004 <privacy@not.givin>  Sat, 26 Sep 2015 22:01:23 +0000
+ 
 imx6-config (0.11) stable; urgency=medium
 
   * miscellaneous bugs fixed
