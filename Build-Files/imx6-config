@@ -6,7 +6,8 @@
 INTERACTIVE=True
 ASK_TO_REBOOT=0
 DRIVE=/tmp/drivelist
-VERSION=`lsb_release -a`
+VERSION=`lsb_release -a && echo "Your IP is"`
+IP=`ifconfig | awk '/inet addr/{print substr($2,6)}'`
 CODENAME=`lsb_release -c -s`
 FILE=/usr/share/fancron
 CRON='*  *    * * *   root    /usr/share/imx6-config/Fan_Control'
@@ -29,7 +30,7 @@ else
 fi
 # Note that USER may still end up as root, if people run it as root instead of using sudo!
 
-whiptail --fb --msgbox "$VERSION" --title "This is your system information." 20 60 1
+whiptail --fb --msgbox "$VERSION $IP" --title "This is your system information." 20 60 1
 
 
 calc_wt_size() {
@@ -53,7 +54,7 @@ do_about() {
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 II                                                              II
 II                 Information about imx6-config                II
-II                  Version 0.11 from 09-17-2015                II
+II                  Version 0.12 from 09-26-2015                II
 II                  Supported devices: SolidRuns                II
 II                                                              II
 II                        * Hummingboard                        II
@@ -164,6 +165,21 @@ if [ $exitstatus = 0 ]; then
     service cron start
     do_fan_menu
 fi
+}
+
+do_wifi() {
+whiptail --fb --yesno "If your running this from SSH, You should cancel now or you will be disconnected once you select your WiFI. Proceed?" 20 60 2 \
+    --yes-button Yes --no-button No
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    wicd-curses
+  IP=`ifconfig | awk '/inet addr/{print substr($2,6)}'`
+  whiptail --fb --msgbox " If your seeing this then that means you exited the program correctly. Your new IP is ( $IP )" 20 60 1
+  elif [ $RET -eq 1 ]; then
+    whiptail --fb --msgbox "Leaving" 20 60 1
+  else
+    return $RET
+  fi
 }
 
 do_swap_install() {
@@ -635,6 +651,7 @@ do_advanced_menu() {
     "A2 SSH" "[Enable/Disable remote command line access to your Imx6 using SSH]" \
     "A3 Uboot" "[Make uEnv.txt edits]" \
     "A4 Fan" "[For those with Fan's on their HB]" \
+    "A5 Wifi" "[Use wifi-curses to configure your wifi]" \
     3>&1 1>&2 2>&3)
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -645,6 +662,7 @@ do_advanced_menu() {
       A2\ *) do_ssh ;;
       A3\ *) do_uboot ;;
       A4\ *) do_fan_menu ;;
+      A5\ *) do_wifi ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi
