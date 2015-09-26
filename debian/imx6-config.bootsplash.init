@@ -1,15 +1,40 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          bootsplash
-# Required-Start:    $local_fs
-# Required-Stop:     
+# Provides:          asplashscreen
+# Required-Start:
+# Required-Stop:
+# Should-Start:      
 # Default-Start:     S
-# Default-Stop:      S
-# Short-Description: Show this to console during boot
+# Default-Stop:
+# Short-Description: Show custom splashscreen
+# Description:       Show custom splashscreen
 ### END INIT INFO
 
 
-PATH=/sbin:/usr/sbin:/bin:/usr/bin
+do_start () {
 
-echo "Booting Debian for Imx6 (SD-CARD)..." >> /dev/tty0
-fbi -once -timeout 5 -noverbose -vt 6 /etc/bootsplash.png
+    /usr/bin/fbi -T 1 -noverbose -a /etc/splash.png    
+    exit 0
+}
+
+case "$1" in
+  start|"")
+    do_start
+    ;;
+  restart|reload|force-reload)
+    echo "Error: argument '$1' not supported" >&2
+    exit 3
+    ;;
+  stop)
+    # No-op
+    ;;
+  status)
+    exit 0
+    ;;
+  *)
+    echo "Usage: asplashscreen [start|stop]" >&2
+    exit 3
+    ;;
+esac
+
+:
