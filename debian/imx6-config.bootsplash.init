@@ -13,7 +13,7 @@
 
 do_start () {
 
-    -fbi -once -timeout 5 -noverbose -vt 6 /etc/bootsplash.png
+    /usr/bin/fbi -once -timeout 5 -noverbose -vt 6 /etc/bootsplash.png
     exit 0
 }
 
