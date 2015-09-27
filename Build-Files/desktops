@@ -28,6 +28,20 @@ fi
     exit 0
   fi
 
+
+# Because of first boot, Not enough room for GUI installs. Looking for a better solution.
+# Would like to get this to check for MB instead of 1G
+DISKSPACE=`df -H / | sed '1d' | awk '{print $2}' | cut -d'.' -f1`
+
+# Disk capacity threshold
+ALERT=1
+if [ ${DISKSPACE} -ge ${ALERT} ]; then
+    echo "Still enough disk space....${DISKSPACE}G+ capacity."
+  else
+    whiptail --fb --msgbox "I'm sorry it looks like you don't have at least ${ALERT}G+ of free space, Please reboot to finish the drive resize or clean up your device" 20 60 1
+    echo "You don't have enough room on your Root device to safely install this. Please reboot to finish setup or clean up your drive."
+ exit 0
+fi
 clear
 calc_wt_size() {
   # NOTE: it's tempting to redirect stderr to /dev/null, so supress error 
