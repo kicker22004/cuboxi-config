@@ -362,7 +362,7 @@ done
         EXCL_ARGS[$i]="--exclude=$pattern/*" 
         ((i=i+1)) 
     done 
-    
+    clear
     EXCL_ARGS[$i]="--exclude=/boot/*"
   echo " Please be very patient, Depending on how large your system is this could take a while." 
   echo " Trust me, We all hate waiting on this.....Probably me more than most...only had to run it countless times so that it goes smooth for you. :P "
