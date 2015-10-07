@@ -662,7 +662,7 @@ do_advanced_menu() {
       A2\ *) do_ssh ;;
       A3\ *) do_uboot ;;
       A4\ *) do_fan_menu ;;
-      A5\ *) do_wifi ;;
+#      A5\ *) do_wifi ;;
       *) whiptail --fb --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --fb --msgbox "There was an error running option $FUN" 20 60 1
   fi

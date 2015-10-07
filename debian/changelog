@@ -1,3 +1,9 @@
+imx6-config (0.13) stable; urgency=medium
+
+  * remove dependency on wicd because it conflicts with preinstalled connman
+
+ -- Kicker22004 <josua@linux.site>  Wed, 07 Oct 2015 10:47:36 +0000
+
 imx6-config (0.12) stable; urgency=low
 
   * Added Wifi Config in the form of wicd-curses
