@@ -1,6 +1,7 @@
 imx6-config (0.13) stable; urgency=medium
 
   * remove dependency on wicd because it conflicts with preinstalled connman
+  * implement wifi connection helper using connmanctl
 
  -- Kicker22004 <josua@linux.site>  Wed, 07 Oct 2015 10:47:36 +0000
 
