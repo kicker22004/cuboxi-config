@@ -312,7 +312,7 @@ done
 # present list to user 
 selected_drive=$(whiptail --menu "Select target disk, Or Cancel to Leave" 20 80 ${#drives[@]} ${drives[@]} 3>&1 1>&2 2>&3) 
   if [ $? -eq 0 ]; then
-  if [[ $selected_drive = "/dev/mmcblk0" ]]
+  if [[ $selected_drive = "/dev/mmcblk*" ]]
   then
   whiptail --msgbox --fb " YOUR A MAD MAN!, THIS IS YOUR SDCARD YOUR TRING TO ERASE!....EXITING" 20 60 1
      return $RET
