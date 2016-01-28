@@ -1,3 +1,10 @@
+imx6-config (0.13.1) stable; urgency=high
+
+  * HackFix for eMMC: prevent users from selecting any MMC device for the 
+    install-to-disk feature
+
+ -- Josua Mayer <josua@linux>  Thu, 28 Jan 2016 15:29:49 +0100
+
 imx6-config (0.13) stable; urgency=medium
 
   * remove dependency on wicd because it conflicts with preinstalled connman
