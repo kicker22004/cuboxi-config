@@ -386,7 +386,7 @@ fi
     EXCL_ARGS[$i]="--exclude=/boot/*"
   echo " Please be very patient, Depending on how large your system is this could take a while." 
   echo " Trust me, We all hate waiting on this.....Probably me more than most...only had to run it countless times so that it goes smooth for you. :P "
-  rsync -aH -p -P ${EXCL_ARGS[@]} / /mnt
+  rsync -aH -p -P ${EXCL_ARGS[@]} / /mnt > $rsynclog 2>&1
   if [[ $? -ne 0 ]]; then
       whiptail --fb --msgbox "Looks like something went wrong, Please check the log at $rsynclog for clues." 20 60 1
   clear
