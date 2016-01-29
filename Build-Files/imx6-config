@@ -54,10 +54,10 @@ do_about() {
 IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 II                                                              II
 II                 Information about imx6-config                II
-II                  Version 0.12 from 09-26-2015                II
+II                  Version 0.13 from 01-29-2016                II
 II                  Supported devices: SolidRuns                II
 II                                                              II
-II                        * Hummingboard                        II
+II                        * Hummingboard/HB2 Edge ect..         II
 II                        * Cuboxi                              II
 II                                                              II
 II                 More info at WWW.SOLID-RUN.COM               II
@@ -312,7 +312,7 @@ done
 # present list to user 
 selected_drive=$(whiptail --menu "Select target disk, Or Cancel to Leave" 20 80 ${#drives[@]} ${drives[@]} 3>&1 1>&2 2>&3) 
   if [ $? -eq 0 ]; then
-  if [[ $selected_drive = "/dev/mmcblk*" ]]
+  if [[ $selected_drive = /dev/mmcblk0 ]]
   then
   whiptail --msgbox --fb " YOUR A MAD MAN!, THIS IS YOUR SDCARD YOUR TRING TO ERASE!....EXITING" 20 60 1
      return $RET
@@ -348,6 +348,17 @@ done
 # Create single partition
     echo -e "o\nn\np\n1\n\n\nw" | fdisk $selected_drive
 
+#######################################################
+############ Hummingboard Edge EMMC ###################
+
+
+if [ $selected_drive == /dev/mmcblk2 ]; then
+selected_drive="${selected_drive}p"
+fi
+
+#######################################################
+#######################################################
+
 # Format the partition
     mke2fs -T ext4 "${selected_drive}1"
     sync
@@ -358,7 +369,6 @@ done
   else
     return $RET
   fi
-   
    whiptail --fb --yesno "About to start coping files, Please be patiant." 15 78 \
      --yes-button Continue --no-button No 
    RET=$? 
@@ -376,7 +386,7 @@ done
     EXCL_ARGS[$i]="--exclude=/boot/*"
   echo " Please be very patient, Depending on how large your system is this could take a while." 
   echo " Trust me, We all hate waiting on this.....Probably me more than most...only had to run it countless times so that it goes smooth for you. :P "
-  rsync -aH -p -P ${EXCL_ARGS[@]} / /mnt > $rsynclog 2>&1
+  rsync -aH -p -P ${EXCL_ARGS[@]} / /mnt
   if [[ $? -ne 0 ]]; then
       whiptail --fb --msgbox "Looks like something went wrong, Please check the log at $rsynclog for clues." 20 60 1
   clear
@@ -442,30 +452,44 @@ selected_boot=$(whiptail --menu "Select target disk to set boot, Or Cancel to Le
         # something bad happened. The user canceled, the program crashed, I haven't got a clue. 
         return $RET
 fi 
-
+whiptail --fb --msgbox "you selected $selected_boot" 20 60 1
 #Trap to check if your trying to boot to sdcard. 
 if [ $? -eq 0 ]; then
   if [[ $selected_boot = "/dev/mmcblk0" ]]
   then
  clear
  mount /dev/mmcblk0p1 /mnt
- sed -i "s;root=/dev/[a-zA-Z0-9]*;root=/dev/mmcblk0p1;1" /mnt/boot/uEnv.txt
+ sed -i "s;mmcroot=/dev/[a-zA-Z0-9]*;mmcroot=/dev/mmcblk0p1;1" /mnt/boot/uEnv.txt
  umount /mnt
  whiptail --fb --msgbox "After Reboot you will be loading off the Sdcard." 20 60 1
  ASK_TO_REBOOT=1
 return $RET
 fi
 
-# Anything Not mmcblk0
+
+#Trap to check if your trying to boot to EMMC.
+if [ $? -eq 0 ]; then
+  if [[ $selected_boot = "/dev/mmcblk2" ]]
+  then
+ clear
+ mount /dev/mmcblk2p1 /mnt
+ sed -i "s;mmcroot=/dev/[a-zA-Z0-9]*;mmcroot=/dev/mmcblk2p1;1" /boot/uEnv.txt
+ umount /mnt
+ whiptail --fb --msgbox "After Reboot you will be loading off the EMMC." 20 60 1
+ ASK_TO_REBOOT=1
+return $RET
+fi
+
+# Anything Not mmc
  clear
  mount ${selected_boot}1 /mnt
- sed -i "s;root=/dev/[a-zA-Z0-9]*;root=${selected_boot}1;1" /boot/uEnv.txt
- 
+ sed -i "s;mmcroot=/dev/[a-zA-Z0-9]*;mmcroot=${selected_boot}1;1" /boot/uEnv.txt
  sed -i 's/Imx6 (.*)/Imx6 (NOT SD-CARD)/g' /mnt/etc/init.d/bootsplash
  sync
  umount /mnt
  whiptail --fb --msgbox "After Reboot you will be loading off the $selected_boot." 20 60 1
  ASK_TO_REBOOT=1
+fi
 fi
 }
 
@@ -750,5 +774,3 @@ while true; do
     exit 1
   fi
 done
-
-
