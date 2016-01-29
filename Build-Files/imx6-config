@@ -452,7 +452,7 @@ selected_boot=$(whiptail --menu "Select target disk to set boot, Or Cancel to Le
         # something bad happened. The user canceled, the program crashed, I haven't got a clue. 
         return $RET
 fi 
-whiptail --fb --msgbox "you selected $selected_boot" 20 60 1
+
 #Trap to check if your trying to boot to sdcard. 
 if [ $? -eq 0 ]; then
   if [[ $selected_boot = "/dev/mmcblk0" ]]
