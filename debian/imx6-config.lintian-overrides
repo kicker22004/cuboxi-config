@@ -1,0 +1,2 @@
+imx6-config binary: init.d-script-missing-dependency-on-remote_fs etc/init.d/bootsplash: required-start
+imx6-config binary: systemd-no-service-for-init-rcS-script bootsplash

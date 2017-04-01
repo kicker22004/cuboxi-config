@@ -3,14 +3,14 @@ imx6-config (0.13.1) stable; urgency=high
   * HackFix for eMMC: prevent users from selecting any MMC device for the 
     install-to-disk feature
 
- -- Josua Mayer <josua@linux>  Thu, 28 Jan 2016 15:29:49 +0100
+ -- Josua Mayer <josua.mayer97@gmail.com>  Thu, 28 Jan 2016 15:29:49 +0100
 
 imx6-config (0.13) stable; urgency=medium
 
   * remove dependency on wicd because it conflicts with preinstalled connman
   * implement wifi connection helper using connmanctl
 
- -- Kicker22004 <josua@linux.site>  Wed, 07 Oct 2015 10:47:36 +0000
+ -- Kicker22004 <josua.mayer97@gmail.com>  Wed, 07 Oct 2015 10:47:36 +0000
 
 imx6-config (0.12) stable; urgency=low
 
@@ -23,7 +23,7 @@ imx6-config (0.11) stable; urgency=medium
 
   * miscellaneous bugs fixed
 
- -- Josua Mayer <josua@seriouspenguin>  Thu, 17 Sep 2015 20:21:31 +0200
+ -- Josua Mayer <josua.mayer97@gmail.com>  Thu, 17 Sep 2015 20:21:31 +0200
 
 imx6-config (0.10) stable; urgency=medium
 
@@ -90,4 +90,4 @@ imx6-config (0.1) unstable; urgency=low
 
    * Initial release
 
-  -- Unknown <unknown> Sun, 08 Feb 2015 19:52:29 +0000
+  -- Josua Mayer <josua.mayer97@gmail.com> Sun, 08 Feb 2015 19:52:29 +0000
